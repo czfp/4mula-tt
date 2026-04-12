@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="fil">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tuklas Talino</title>
+    <meta name="theme-color" content="#2ECC71"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="stylesheet" href="assets/css/style.css"/>
+  <link rel="stylesheet" href="gamification/gamification.css"/>
+</head>
+
+<body>
+  <div class="notif-wrap" id="notif-wrap"></div>
+
+  <div class="modal-backdrop" id="t-student-modal">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Student details">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="t-student-modal-title">Student Details</div>
+          <div class="modal-sub" id="t-student-modal-sub">—</div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="closeTeacherStudentDetail()">✖ Close</button>
+      </div>
+      <div class="divider"></div>
+      <div id="t-student-modal-body"></div>
+    </div>
+  </div>
+
+
+  <div class="modal-backdrop" id="quiz-modal">
+    <div class="modal quiz-modal-card" role="dialog" aria-modal="true" aria-label="Quick quiz">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="quiz-modal-title">🎮 Quick Quiz</div>
+          <div class="modal-sub" id="quiz-modal-meta">Subukan ang susunod na tanong.</div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="closeQuickQuiz()">✖ Close</button>
+      </div>
+      <div class="divider"></div>
+      <div id="quiz-modal-body"></div>
+      <div class="divider"></div>
+      <div class="row" style="justify-content:space-between">
+        <div class="pill">⭐ <span id="quiz-modal-score">0</span> puntos</div>
+        <button class="btn btn-green" id="quiz-next-btn" onclick="nextQuickQuizStep()" disabled>Sunod ➜</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- LANDING -->
+  <div id="screen-landing" class="screen active">
+    <div class="landing-wrap">
+      <div class="landing-shell">
+        <div class="landing-topbar">
+          <div class="landing-brand">🌟 Tuklas Talino</div>
+          <div class="landing-top-actions">
+            <button class="btn btn-outline btn-sm landing-login-btn" onclick="go('screen-login-student')">Student Login</button>
+            <button class="btn btn-outline btn-sm landing-login-btn teacher" onclick="go('screen-login-teacher')">Teacher Login</button>
+            <button class="btn btn-outline btn-sm landing-login-btn admin" onclick="go('screen-login-admin')">Admin Login</button>
+          </div>
+        </div>
+
+        <div class="landing-hero-grid">
+          <div class="landing-copy">
+            <div class="landing-pill">🇵🇭 Gamified Filipino Learning Modules</div>
+            <h1 class="landing-title">Mas masaya ang pag-aaral kapag parang laro ang Filipino classroom.</h1>
+            <p class="landing-lead">Isang colorful na learning space para sa Baitang 1–6 na may ready-to-use modules, kid-friendly missions, badges, rewards, at collaborative activities para sa students, teachers, at admins.</p>
+
+            <div class="landing-checklist">
+              <div class="landing-check">✨ Ready-to-use learning modules per grade level</div>
+              <div class="landing-check">🎮 Visual at playful student experience for Grade 1–6</div>
+              <div class="landing-check">🏆 XP, badges, stars, progress, at group quests</div>
+            </div>
+
+            <div class="landing-cta-row">
+              <button class="btn btn-green landing-main-cta" onclick="go('screen-home')">🚀 Start Demo</button>
+              <button class="btn btn-yellow landing-main-cta" onclick="go('screen-login-student')">🎒 Open Student View</button>
+            </div>
+
+            <div class="landing-note">Built for a capstone-style demo flow with separate student, teacher, and admin access.</div>
+          </div>
+
+          <div class="landing-visual">
+            <div class="landing-window">
+              <div class="landing-window-bar">
+                <div class="landing-dots">
+                  <span></span><span></span><span></span>
+                </div>
+                <div class="landing-window-title">Learning Modules</div>
+              </div>
+
+              <div class="landing-window-body">
+                <div class="landing-showcase-card hero">
+                  <div class="landing-showcase-copy">
+                    <div class="landing-showcase-kicker">Weekly Adventure</div>
+                    <div class="landing-showcase-title">Pagbasa Quest</div>
+                    <div class="landing-showcase-sub">Stories, stars, and simple guided activities for young learners.</div>
+                  </div>
+                  <div class="landing-showcase-badge">⭐ +25 XP</div>
+                </div>
+
+                <div class="landing-module-grid">
+                  <div class="landing-module-card mint">
+                    <div class="landing-module-icon">📖</div>
+                    <div>
+                      <div class="landing-module-name">Pagbasa</div>
+                      <div class="landing-module-sub">Story trail</div>
+                    </div>
+                  </div>
+                  <div class="landing-module-card sky">
+                    <div class="landing-module-icon">🔤</div>
+                    <div>
+                      <div class="landing-module-name">Bokabularyo</div>
+                      <div class="landing-module-sub">Word play</div>
+                    </div>
+                  </div>
+                  <div class="landing-module-card peach">
+                    <div class="landing-module-icon">🎙️</div>
+                    <div>
+                      <div class="landing-module-name">Oral Comm</div>
+                      <div class="landing-module-sub">Speak & listen</div>
+                    </div>
+                  </div>
+                  <div class="landing-module-card lavender">
+                    <div class="landing-module-icon">🏅</div>
+                    <div>
+                      <div class="landing-module-name">Rewards</div>
+                      <div class="landing-module-sub">Badges & stars</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="landing-mini-panels">
+                  <div class="landing-mini-panel">
+                    <div class="landing-mini-label">Today's Progress</div>
+                    <div class="landing-mini-value">3 / 5 tasks</div>
+                    <div class="landing-mini-progress"><span style="width:60%"></span></div>
+                  </div>
+                  <div class="landing-mini-panel">
+                    <div class="landing-mini-label">Class Rewards</div>
+                    <div class="landing-mini-stars">⭐ ⭐ ⭐ ⭐</div>
+                    <div class="landing-mini-sub">Unlock sticker chest</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="landing-stats">
+          <div class="landing-stat-card">
+            <div class="landing-stat-value">6</div>
+            <div class="landing-stat-label">Grade levels supported</div>
+          </div>
+          <div class="landing-stat-card">
+            <div class="landing-stat-value">5</div>
+            <div class="landing-stat-label">Core Filipino learning worlds</div>
+          </div>
+          <div class="landing-stat-card">
+            <div class="landing-stat-value">3</div>
+            <div class="landing-stat-label">User roles in one capstone demo</div>
+          </div>
+          <div class="landing-stat-card">
+            <div class="landing-stat-value">XP</div>
+            <div class="landing-stat-label">Gamified rewards and progress tracking</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div id="screen-home" class="screen">
+    <div class="home-wrap">
+      <div class="home-card">
+        <button class="btn btn-outline btn-sm" onclick="go('screen-landing')">← Back to Welcome</button>
+        <div class="home-title">Tuklas Talino</div>
+        <div class="muted">🇵🇭 Filipino Learning + Gamified Collaboration • Baitang 1–6</div>
+
+        <div class="role-cards">
+          <div class="role-card role-student" onclick="go('screen-login-student')">
+            <span class="role-emoji">🎒</span> Mag-aaral
+          </div>
+          <div class="role-card role-teacher" onclick="go('screen-login-teacher')">
+            <span class="role-emoji">👩‍🏫</span> Guro
+          </div>
+          <div class="role-card role-admin" onclick="go('screen-login-admin')">
+            <span class="role-emoji">🛡️</span> Admin
+          </div>
+        </div>
+
+        <div class="card" style="text-align:left;width:min(980px,95vw)">
+          <div class="section-title">✨ Quick Demo Accounts</div>
+          <div class="muted">
+            <div><b>Admin:</b> username <b>admin</b> / password <b>admin123</b></div>
+            <div><b>Teacher:</b> username <b>teacher1</b> / password <b>teach123</b></div>
+            <div><b>Student IDs:</b> STU-2025-001 ... STU-2025-006</div>
+            <div style="margin-top:8px">Tip: Admin can create more accounts; Teacher can create groups & tasks.</div>
+          </div>
+          <div class="divider"></div>
+          <button class="btn btn-outline btn-sm" onclick="resetDemo()">♻️ Reset Demo Data</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STUDENT LOGIN -->
+  <div id="screen-login-student" class="screen">
+    <div class="top-nav">
+      <button class="btn btn-outline btn-sm" onclick="go('screen-home')">← Home</button>
+      <div class="logo">🎒 Student Login</div>
+      <div></div>
+    </div>
+    <div class="login-wrap">
+      <div class="login-box">
+        <h2>Mag-login, Estudyante!</h2>
+        <div class="muted">Piliin ang avatar at i-enter ang Student ID.</div>
+
+        <div class="divider"></div>
+
+        <div class="section-title">Avatar</div>
+        <div class="avatar-grid" id="stu-avatar-grid"></div>
+
+        <div class="divider"></div>
+
+        <div class="section-title">Student ID</div>
+        <input class="input-field" id="stu-id" placeholder="Hal. STU-2025-001"/>
+
+        <div class="divider"></div>
+        <button class="btn btn-green" style="width:100%;justify-content:center" onclick="loginStudent()">Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEACHER LOGIN -->
+  <div id="screen-login-teacher" class="screen">
+    <div class="top-nav">
+      <button class="btn btn-outline btn-sm" onclick="go('screen-home')">← Home</button>
+      <div class="logo">👩‍🏫 Teacher Login</div>
+      <div></div>
+    </div>
+    <div class="login-wrap">
+      <div class="login-box">
+        <h2>Mag-login, Guro!</h2>
+        <div class="muted">Gamitin ang teacher username & password.</div>
+
+        <div class="divider"></div>
+
+        <div class="section-title">Credentials</div>
+        <input class="input-field" id="t-username" placeholder="Username"/>
+        <div style="height:10px"></div>
+        <input class="input-field" id="t-password" placeholder="Password" type="password"/>
+
+        <div class="divider"></div>
+        <button class="btn btn-blue" style="width:100%;justify-content:center" onclick="loginTeacher()">Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN LOGIN -->
+  <div id="screen-login-admin" class="screen">
+    <div class="top-nav">
+      <button class="btn btn-outline btn-sm" onclick="go('screen-home')">← Home</button>
+      <div class="logo">🛡️ Admin Login</div>
+      <div></div>
+    </div>
+    <div class="login-wrap">
+      <div class="login-box">
+        <h2>Mag-login, Admin!</h2>
+        <div class="muted">Gamitin ang admin username & password.</div>
+
+        <div class="divider"></div>
+
+        <div class="section-title">Credentials</div>
+        <input class="input-field" id="a-username" placeholder="Username"/>
+        <div style="height:10px"></div>
+        <input class="input-field" id="a-password" placeholder="Password" type="password"/>
+
+        <div class="divider"></div>
+        <button class="btn btn-purple" style="width:100%;justify-content:center" onclick="loginAdmin()">Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STUDENT DASH -->
+  <div id="screen-student" class="screen">
+    <div class="top-nav">
+      <div class="logo">🌟 Tuklas Talino</div>
+      <div class="row">
+        <div class="pill">⚡ <span id="stu-xp">0</span> XP</div>
+        <button class="btn btn-outline btn-sm" onclick="logout()">Logout</button>
+      </div>
+    </div>
+
+    <div class="scroll">
+      <div class="hero" id="student-hero">
+        <div class="ava" id="stu-ava">🦊</div>
+        <div style="flex:1">
+          <div style="font-family:'Fredoka One',cursive;font-size:20px" id="stu-greet">Mabuhay!</div>
+          <div class="muted" id="stu-meta">Baitang • Seksyon</div>
+          <div style="margin-top:10px">
+            <div class="row" style="justify-content:space-between">
+              <div class="muted" style="color:white;opacity:.9">Level <span id="stu-level">1</span></div>
+              <div class="muted" style="color:white;opacity:.9"><span id="stu-xp-pct">0%</span></div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="stu-xp-bar" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="grade12-dashboard" class="grade12-zone" hidden></div>
+
+      <div id="student-standard-sections">
+        <div class="card">
+          <div class="section-title">📌 Araw-araw na Gawain</div>
+          <div id="daily-wrap"></div>
+        </div>
+
+        <div class="card">
+          <div class="section-title">📚 Mga Module</div>
+          <div class="grid grid-3">
+            <button class="module-card" style="background:#D5F5E3" onclick="openSubject('Pagbasa')"><div class="icon">📖</div>Pagbasa</button>
+            <button class="module-card" style="background:#D6EAF8" onclick="openSubject('Bokabularyo')"><div class="icon">🔤</div>Bokabularyo</button>
+            <button class="module-card" style="background:#FDEBD0" onclick="openSubject('Panitikan')"><div class="icon">📜</div>Panitikan</button>
+            <button class="module-card" style="background:#FADBD8" onclick="openSubject('Oral Comm')"><div class="icon">🎙️</div>Oral Comm</button>
+            <button class="module-card" style="background:#FEF9C3" onclick="openSubject('Pagsulat')"><div class="icon">✍️</div>Pagsulat</button>
+            <button class="module-card" style="background:#E8DAEF" onclick="goStudentTab('groups')"><div class="icon">👥</div>Grupo</button>
+          </div>
+        </div>
+        <div class="card" id="stu-progress-card">
+          <div class="section-title">📊 Aking Progreso</div>
+          <div class="muted" style="margin-bottom:10px">
+            Makikita dito ang iyong natapos na aralin sa bawat module (progress tracking).
+          </div>
+          <div id="stu-progress-wrap"></div>
+        </div>
+
+        <div class="card" id="stu-upcoming-card">
+          <div class="section-title">⏰ Mga Paparating na Gawain</div>
+          <div class="muted" style="margin-bottom:10px">
+            Para sa time management: mga group tasks na may deadline at hindi pa tapos.
+          </div>
+          <div id="stu-upcoming-wrap"></div>
+        </div>
+
+        <div class="card" id="leaderboard-card">
+          <div class="section-title">🏆 Leaderboard (Seksyon)</div>
+          <div id="lb-wrap"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <button id="bnav-stu-home" class="bnav-item active" onclick="goStudentTab('home')"><span class="ni">🏠</span>Home</button>
+      <button id="bnav-stu-groups" class="bnav-item" onclick="goStudentTab('groups')"><span class="ni">👥</span>Groups</button>
+      <button id="bnav-stu-badges" class="bnav-item" onclick="goStudentTab('badges')"><span class="ni">🏅</span>Badges</button>
+      <button id="bnav-stu-profile" class="bnav-item" onclick="goStudentTab('profile')"><span class="ni">👤</span>Profile</button>
+    </div>
+  </div>
+
+  <!-- STUDENT: SUBJECT LESSON LIST -->
+  <div id="screen-lessons" class="screen">
+    <div class="top-nav">
+      <button class="btn btn-outline btn-sm" onclick="go('screen-student')">← Dashboard</button>
+      <div class="logo" id="lessons-title">📚 Lessons</div>
+      <div class="pill">📌 <span id="lessons-count">0</span></div>
+    </div>
+    <div class="scroll">
+      <div class="card">
+        <div class="muted" id="lessons-sub">Mga aralin para sa iyong baitang.</div>
+      </div>
+      <div id="lessons-wrap"></div>
+    </div>
+  </div>
+
+  <!-- STUDENT: LESSON VIEW -->
+  <div id="screen-lesson" class="screen">
+    <div class="top-nav">
+      <button class="btn btn-outline btn-sm" onclick="backFromLesson()">← Back</button>
+      <div class="logo" id="lesson-title">📖 Lesson</div>
+      <div class="pill">⚡ +<span id="lesson-xp">0</span></div>
+    </div>
+    <div class="scroll">
+      <div class="card">
+        <div class="section-title">📘 Teksto</div>
+        <div class="muted" id="lesson-instructions"></div>
+        <div class="divider"></div>
+        <div id="lesson-passage" style="font-size:15px;line-height:1.8;font-weight:700"></div>
+
+        <div class="divider"></div>
+
+        <div class="row">
+          <button class="btn btn-blue" onclick="ttsSpeakPassage()">🔊 Pakinggan (TTS)</button>
+          <button class="btn btn-purple" onclick="startPronunciation()">🎤 Magsalita</button>
+          <button class="btn btn-outline" onclick="stopAllAudio()">⏹ Stop</button>
+        </div>
+
+        <div class="divider"></div>
+        <div id="speech-feedback"></div>
+      </div>
+
+      <div id="lesson-activity"></div>
+
+      <div class="card">
+        <div class="section-title">✅ Tapusin</div>
+        <div class="muted">Kapag natapos mo na ang gawain, pindutin ito para maitala ang progreso at XP.</div>
+        <div class="divider"></div>
+        <button class="btn btn-green" style="width:100%;justify-content:center" onclick="completeLesson()">🎉 Mark as Completed</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STUDENT: GROUPS -->
+  <div id="screen-stu-groups" class="screen">
+    <div class="top-nav">
+      <button class="btn btn-outline btn-sm" onclick="go('screen-student')">← Dashboard</button>
+      <div class="logo">👥 Mga Grupo</div>
+      <div></div>
+    </div>
+    <div class="scroll">
+      <div class="card" style="background:linear-gradient(135deg,var(--orange),#E67E22);color:white">
+        <div class="section-title" style="color:white">👥 Group Tasks</div>
+        <div class="muted" style="color:white;opacity:.9">Gawin ang tasks bago ang deadline. Ang guro ay makakakita ng progress at participation.</div>
+      </div>
+      <div id="stu-groups-wrap"></div>
+    </div>
+  </div>
+
+  <!-- STUDENT: BADGES -->
+  <div id="screen-stu-badges" class="screen">
+    <div class="top-nav">
+      <button class="btn btn-outline btn-sm" onclick="go('screen-student')">← Dashboard</button>
+      <div class="logo">🏅 Badges</div>
+      <div class="pill">⚡ <span id="badge-xp">0</span></div>
+    </div>
+    <div class="scroll">
+      <div class="card">
+        <div class="section-title">🌟 Achievements</div>
+        <div id="badges-wrap"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STUDENT: PROFILE -->
+  <div id="screen-stu-profile" class="screen">
+    <div class="top-nav">
+      <button class="btn btn-outline btn-sm" onclick="go('screen-student')">← Dashboard</button>
+      <div class="logo">👤 Profile</div>
+      <div></div>
+    </div>
+    <div class="scroll">
+      <div class="card">
+        <div class="section-title">Avatar</div>
+        <div class="muted">Palitan ang avatar mo (saved sa account).</div>
+        <div class="divider"></div>
+        <div class="avatar-grid" id="profile-avatar-grid"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">📊 Summary</div>
+        <div id="profile-summary"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEACHER DASH -->
+  <div id="screen-teacher" class="screen">
+    <div class="top-nav">
+      <div class="logo">👩‍🏫 Teacher Dashboard</div>
+      <div class="row">
+        <div class="pill">🏫 <span id="t-name">Teacher</span></div>
+        <button class="btn btn-outline btn-sm" onclick="logout()">Logout</button>
+      </div>
+    </div>
+    <div class="scroll">
+      <div class="card" style="background:linear-gradient(135deg,#2980B9,#3498DB);color:white">
+        <div class="section-title" style="color:white">📌 Monitoring</div>
+        <div class="muted" style="color:white;opacity:.9">Tingnan ang progreso, engagement, group participation, at reports.</div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">📈 Quick Stats</div>
+        <div class="grid grid-3" id="t-stats"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">👥 Group Manager</div>
+        <div class="muted">Gumawa ng grupo, mag-assign ng members, at maglagay ng tasks + deadline.</div>
+        <div class="divider"></div>
+
+        <div class="grid grid-2">
+          <div class="card" style="box-shadow:none;background:var(--bg)">
+            <div class="section-title">➕ Create Group</div>
+            <input class="input-field" id="t-group-name" placeholder="Group name (Hal. Grupo Sampaguita)"/>
+            <div style="height:10px"></div>
+            <input class="input-field" id="t-group-section" placeholder="Section (Hal. Bulaklak)"/>
+            <div style="height:10px"></div>
+            <button class="btn btn-green" onclick="teacherCreateGroup()">Create</button>
+          </div>
+
+          <div class="card" style="box-shadow:none;background:var(--bg)">
+            <div class="section-title">➕ Add Task</div>
+            <select class="input-field" id="t-task-group"></select>
+            <div style="height:10px"></div>
+            <input class="input-field" id="t-task-title" placeholder="Task title (Hal. Basahin ang Aralin 1)"/>
+            <div style="height:10px"></div>
+            <input class="input-field" id="t-task-deadline" type="date"/>
+            <div style="height:10px"></div>
+            <input class="input-field" id="t-task-xp" type="number" min="0" value="10" placeholder="XP"/>
+            <div style="height:10px"></div>
+            <button class="btn btn-blue" onclick="teacherAddTask()">Add Task</button>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section-title">📋 Groups</div>
+        <div id="t-groups-wrap"></div>
+      </div>
+
+      
+      <div class="card">
+        <div class="section-title">📚 Lesson Manager (Teacher-Created)</div>
+        <div class="muted">
+          Create Filipino lessons and activities for Grade 1–6 (supports the “learning modules and exercises” objective).
+          Lessons are saved in the system database (localStorage) for demo purposes.
+        </div>
+        <div class="divider"></div>
+
+        <div class="grid grid-2">
+          <div class="card" style="box-shadow:none;background:var(--bg)">
+            <div class="section-title">➕ Create Lesson</div>
+            <select class="input-field" id="t-lesson-grade">
+              <option value="1">Grade 1</option><option value="2">Grade 2</option><option value="3">Grade 3</option>
+              <option value="4">Grade 4</option><option value="5">Grade 5</option><option value="6">Grade 6</option>
+            </select>
+            <div style="height:10px"></div>
+            <select class="input-field" id="t-lesson-subject">
+              <option value="Pagbasa">Pagbasa</option>
+              <option value="Bokabularyo">Bokabularyo</option>
+              <option value="Panitikan">Panitikan</option>
+              <option value="Oral Comm">Oral Comm</option>
+              <option value="Pagsulat">Pagsulat</option>
+            </select>
+            <div style="height:10px"></div>
+            <input class="input-field" id="t-lesson-title" placeholder="Lesson title"/>
+            <div style="height:10px"></div>
+            <input class="input-field" id="t-lesson-xp" type="number" min="0" max="500" value="25" placeholder="XP reward"/>
+            <div style="height:10px"></div>
+            <textarea class="input-field" id="t-lesson-instructions" placeholder="Instructions (short)"></textarea>
+            <div style="height:10px"></div>
+            <textarea class="input-field" id="t-lesson-passage" placeholder="Passage / content text"></textarea>
+            <div style="height:10px"></div>
+            <input class="input-field" id="t-lesson-speechTarget" placeholder="Speech target (optional, for pronunciation practice)"/>
+          </div>
+
+          <div class="card" style="box-shadow:none;background:var(--bg)">
+            <div class="section-title">🧩 Optional Activities</div>
+            <div class="muted">MCQ (1 question) and/or Writing prompt (simple capstone scope).</div>
+            <div class="divider"></div>
+
+            <div class="section-title">MCQ (optional)</div>
+            <input class="input-field" id="t-mcq-q" placeholder="Question"/>
+            <div style="height:10px"></div>
+            <input class="input-field" id="t-mcq-a" placeholder="Choice A"/>
+            <div style="height:10px"></div>
+            <input class="input-field" id="t-mcq-b" placeholder="Choice B"/>
+            <div style="height:10px"></div>
+            <input class="input-field" id="t-mcq-c" placeholder="Choice C"/>
+            <div style="height:10px"></div>
+            <input class="input-field" id="t-mcq-d" placeholder="Choice D"/>
+            <div style="height:10px"></div>
+            <select class="input-field" id="t-mcq-correct">
+              <option value="0">Correct: A</option>
+              <option value="1">Correct: B</option>
+              <option value="2">Correct: C</option>
+              <option value="3">Correct: D</option>
+            </select>
+
+            <div class="divider"></div>
+            <div class="section-title">Writing Prompt (optional)</div>
+            <textarea class="input-field" id="t-writing-prompt" placeholder="Writing prompt"></textarea>
+
+            <div class="divider"></div>
+            <button class="btn btn-green" onclick="teacherCreateLesson()">Create Lesson</button>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="section-title">📋 Recently Created Lessons</div>
+        <div id="t-lessons-wrap" class="muted">No teacher-created lessons yet.</div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">👨‍🎓 Students (Monitoring Table)</div>
+        <div class="row">
+          <select class="input-field" id="t-filter-section" style="max-width:280px" onchange="renderTeacherStudents()"></select>
+          <button class="btn btn-outline btn-sm" onclick="exportStudentsCSV()">⬇️ Export CSV</button>
+          <button class="btn btn-outline btn-sm" onclick="exportLogsCSV()">⬇️ Export Activity Logs</button>
+          <button class="btn btn-outline btn-sm" onclick="downloadSummaryReport()">🧾 Download Summary Report</button>
+        </div>
+        <div class="divider"></div>
+        <div class="table">
+          <div class="thead">
+            <div>Student</div>
+            <div>XP</div>
+            <div>Lessons</div>
+            <div class="hide-sm">Quiz Avg</div>
+            <div class="hide-sm">Last Active</div>
+          </div>
+          <div id="t-students-table"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN DASH -->
+  <div id="screen-admin" class="screen">
+    <div class="top-nav">
+      <div class="logo">🛡️ Admin Dashboard</div>
+      <div class="row">
+        <div class="pill">⚙️ Manage Accounts</div>
+        <button class="btn btn-outline btn-sm" onclick="logout()">Logout</button>
+      </div>
+    </div>
+
+    <div class="scroll">
+      <div class="card" style="background:linear-gradient(135deg,var(--purple),#8E44AD);color:white">
+        <div class="section-title" style="color:white">👥 Account Management</div>
+        <div class="muted" style="color:white;opacity:.9">Magdagdag at mag-manage ng Students at Teachers.</div>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="section-title">👨‍🎓 Add Student</div>
+          <input class="input-field" id="a-stu-id" placeholder="Student ID (unique)"/>
+          <div style="height:10px"></div>
+          <input class="input-field" id="a-stu-name" placeholder="Name"/>
+          <div style="height:10px"></div>
+          <input class="input-field" id="a-stu-grade" type="number" min="1" max="6" placeholder="Grade (1-6)"/>
+          <div style="height:10px"></div>
+          <input class="input-field" id="a-stu-section" placeholder="Section"/>
+          <div class="divider"></div>
+          <button class="btn btn-green" onclick="adminAddStudent()">Add Student</button>
+        </div>
+
+        <div class="card">
+          <div class="section-title">👩‍🏫 Add Teacher</div>
+          <input class="input-field" id="a-t-username" placeholder="Username (unique)"/>
+          <div style="height:10px"></div>
+          <input class="input-field" id="a-t-name" placeholder="Teacher Name"/>
+          <div style="height:10px"></div>
+          <input class="input-field" id="a-t-password" placeholder="Password"/>
+          <div class="divider"></div>
+          <button class="btn btn-blue" onclick="adminAddTeacher()">Add Teacher</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">📋 Students</div>
+        <div class="row">
+          <select class="input-field" id="a-stu-filter" style="max-width:260px" onchange="renderAdminStudents()">
+            <option value="ACTIVE">Active</option>
+            <option value="ARCHIVED">Archived</option>
+            <option value="ALL">All</option>
+          </select>
+          <button class="btn btn-outline btn-sm" onclick="renderAdminStudents()">Refresh</button>
+        </div>
+        <div class="divider"></div>
+        <div id="admin-students-wrap"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">📋 Teachers</div>
+        <div class="row">
+          <select class="input-field" id="a-t-filter" style="max-width:260px" onchange="renderAdminTeachers()">
+            <option value="ACTIVE">Active</option>
+            <option value="ARCHIVED">Archived</option>
+            <option value="ALL">All</option>
+          </select>
+          <button class="btn btn-outline btn-sm" onclick="renderAdminTeachers()">Refresh</button>
+        </div>
+        <div class="divider"></div>
+        <div id="admin-teachers-wrap"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">🗂️ Account History (Audit Trail)</div>
+        <div class="muted">Read-only record of maintenance actions (archive/reactivate/reset) for ethical record-keeping.</div>
+        <div class="divider"></div>
+        <div class="row">
+          <select class="input-field" id="a-hist-filter" style="max-width:320px" onchange="renderAdminHistory()">
+            <option value="ALL">All</option>
+            <option value="ACCOUNT">Account changes</option>
+            <option value="RESET">Resets</option>
+          </select>
+          <button class="btn btn-outline btn-sm" onclick="renderAdminHistory()">Refresh</button>
+        </div>
+        <div class="divider"></div>
+        <div id="admin-history-wrap"></div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- TEACHER: EDIT LESSON MODAL (edit-only, no delete) -->
+  <div id="t-lesson-edit-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9998;align-items:center;justify-content:center;padding:18px;">
+    <div class="card" style="width:min(820px,95vw);max-height:90vh;overflow:auto">
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <div class="section-title">✏️ Edit Lesson (Teacher-Created)</div>
+        <button class="btn btn-outline btn-sm" onclick="closeTeacherEditModal()">✖ Close</button>
+      </div>
+      <div class="muted">Edit is allowed only for teacher-created lessons. Deletion is disabled for ethical record-keeping.</div>
+      <div class="divider"></div>
+
+      <input type="hidden" id="t-edit-lessonId"/>
+
+      <div class="grid grid-2">
+        <div>
+          <div class="muted">Title</div>
+          <input class="input-field" id="t-edit-title"/>
+          <div style="height:10px"></div>
+
+          <div class="muted">XP</div>
+          <input class="input-field" id="t-edit-xp" type="number" min="0" max="500"/>
+          <div style="height:10px"></div>
+
+          <div class="muted">Instructions</div>
+          <textarea class="input-field" id="t-edit-instructions"></textarea>
+          <div style="height:10px"></div>
+
+          <div class="muted">Passage / Content</div>
+          <textarea class="input-field" id="t-edit-passage"></textarea>
+          <div style="height:10px"></div>
+
+          <div class="muted">Speech Target (optional)</div>
+          <input class="input-field" id="t-edit-speechTarget"/>
+        </div>
+
+        <div>
+          <div class="section-title">Optional MCQ (1)</div>
+          <input class="input-field" id="t-edit-mcq-q" placeholder="Question"/>
+          <div style="height:10px"></div>
+          <input class="input-field" id="t-edit-mcq-a" placeholder="Choice A"/>
+          <div style="height:10px"></div>
+          <input class="input-field" id="t-edit-mcq-b" placeholder="Choice B"/>
+          <div style="height:10px"></div>
+          <input class="input-field" id="t-edit-mcq-c" placeholder="Choice C"/>
+          <div style="height:10px"></div>
+          <input class="input-field" id="t-edit-mcq-d" placeholder="Choice D"/>
+          <div style="height:10px"></div>
+          <select class="input-field" id="t-edit-mcq-correct">
+            <option value="0">Correct: A</option>
+            <option value="1">Correct: B</option>
+            <option value="2">Correct: C</option>
+            <option value="3">Correct: D</option>
+          </select>
+
+          <div class="divider"></div>
+          <div class="section-title">Optional Writing Prompt</div>
+          <textarea class="input-field" id="t-edit-writing-prompt" placeholder="Writing prompt"></textarea>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <button class="btn btn-green" onclick="teacherSaveLessonEdits()">💾 Save Changes</button>
+    </div>
+  </div>
+
+    <script src="data/students.js"></script>
+  <script src="assets/js/core.js"></script>
+  <script src="gamification/gamification.js"></script>
+  <script src="adaptive-ui/grade-ui.js"></script>
+  <script src="assets/js/student.js"></script>
+  <script src="assets/js/teacher.js"></script>
+  <script src="assets/js/admin.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
