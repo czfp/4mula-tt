@@ -1,0 +1,2891 @@
+<!DOCTYPE html>
+<html lang="fil">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tuklas Talino (Single File)</title>
+  <meta name="theme-color" content="#2ECC71"/>
+  <link rel="manifest" href="manifest.json"/>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap');
+
+    :root{
+      --green:#2ECC71;--green-dark:#27AE60;--green-light:#A9DFBF;
+      --yellow:#F9CA24;--yellow-dark:#F0B429;--yellow-light:#FEF9C3;
+      --orange:#FF8C42;--pink:#FF6B9D;--blue:#4ECDC4;--purple:#9B59B6;
+      --lavender:#D7BDE2;--sky:#AED6F1;--peach:#FDEBD0;
+      --bg:#F0FFF4;--text:#2C3E50;--text-light:#7F8C8D;
+      --card:#FFFFFF;--shadow:0 4px 20px rgba(46,204,113,0.15);
+      --shadow-hover:0 8px 30px rgba(46,204,113,0.3);--radius:20px;--radius-sm:12px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+    .screen{display:none;min-height:100vh;flex-direction:column;}
+    .screen.active{display:flex;}
+    .top-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:white;box-shadow:0 2px 15px rgba(46,204,113,.1);position:sticky;top:0;z-index:100;}
+    .logo{font-family:'Fredoka One',cursive;font-size:20px;color:var(--green-dark);display:flex;align-items:center;gap:8px;}
+    .card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);}
+    .btn{font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;padding:13px 26px;border:none;border-radius:50px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px;user-select:none;}
+    .btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover);}
+    .btn:active{transform:scale(0.96);}
+    .btn-green{background:var(--green);color:white;}
+    .btn-yellow{background:var(--yellow);color:var(--text);}
+    .btn-outline{background:transparent;border:3px solid var(--green);color:var(--green);}
+    .btn-blue{background:var(--blue);color:white;}
+    .btn-purple{background:var(--purple);color:white;}
+    .btn-danger{background:#E74C3C;color:white;}
+    .btn-sm{padding:8px 16px;font-size:13px;}
+    .input-field{width:100%;padding:13px 18px;border:2.5px solid var(--green-light);border-radius:var(--radius-sm);font-family:'Nunito',sans-serif;font-size:15px;font-weight:600;color:var(--text);background:white;outline:none;transition:border .2s;}
+    .input-field:focus{border-color:var(--green);}
+    textarea.input-field{min-height:120px;resize:vertical;}
+    .muted{color:var(--text-light);font-weight:700;font-size:12px;line-height:1.5;}
+    .section-title{font-family:'Fredoka One',cursive;font-size:19px;color:var(--green-dark);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+    .pill{display:inline-flex;align-items:center;gap:6px;background:var(--yellow-light);border-radius:50px;padding:5px 12px;font-weight:800;font-size:13px;}
+    .progress-bar{height:12px;background:#E8F8F0;border-radius:50px;overflow:hidden;}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--yellow));border-radius:50px;transition:width .35s ease;}
+    .grid{display:grid;gap:12px;}
+    .grid-2{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .grid-3{grid-template-columns:repeat(3,minmax(0,1fr));}
+    .scroll{flex:1;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:16px;}
+    .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+    .divider{height:1px;background:#EEE;margin:12px 0;}
+    .table{background:white;border-radius:14px;overflow:hidden;box-shadow:var(--shadow);}
+    .thead,.trow{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:10px;align-items:center;}
+    .thead{padding:10px 14px;background:var(--bg);font-size:11px;font-weight:900;color:var(--text-light);text-transform:uppercase;}
+    .trow{padding:12px 14px;border-top:1px solid #EEE;font-size:13px;font-weight:700;}
+    .badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 10px;font-weight:900;font-size:12px;}
+    .badge-ok{background:var(--green-light);color:var(--green-dark);}
+    .badge-warn{background:var(--yellow-light);color:var(--text);}
+    .badge-bad{background:#FDECEA;color:#C0392B;}
+    .lesson-card{display:flex;align-items:center;gap:14px;padding:14px 16px;background:white;border-radius:14px;cursor:pointer;box-shadow:var(--shadow);transition:all .2s;border-left:4px solid var(--green);}
+    .lesson-card:hover{transform:translateX(4px);box-shadow:var(--shadow-hover);}
+    .lesson-icon{font-size:26px;}
+    .lesson-xp{margin-left:auto;background:var(--yellow-light);color:var(--yellow-dark);padding:4px 10px;border-radius:50px;font-size:11px;font-weight:900;white-space:nowrap;}
+    .module-card{border-radius:18px;padding:18px 12px;text-align:center;cursor:pointer;transition:all .2s;font-weight:900;font-size:13px;border:none;display:flex;flex-direction:column;align-items:center;gap:8px;}
+    .module-card:hover{transform:translateY(-4px) scale(1.04);}
+    .module-card .icon{font-size:34px;}
+    .feedback{padding:14px 18px;border-radius:14px;font-weight:900;font-size:14px;text-align:left;}
+    .feedback.ok{background:var(--green-light);color:var(--green-dark);}
+    .feedback.warn{background:var(--yellow-light);color:var(--text);}
+    .feedback.bad{background:#FDECEA;color:#C0392B;}
+    .bottom-nav{display:flex;background:white;border-top:2px solid #F0F0F0;padding:8px 16px;gap:2px;}
+    .bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 4px;cursor:pointer;border-radius:13px;transition:all .2s;font-size:10px;font-weight:900;color:var(--text-light);border:none;background:none;font-family:'Nunito';}
+    .bnav-item:hover{background:var(--green-light);color:var(--green-dark);}
+    .bnav-item.active{color:var(--green-dark);background:var(--green-light);}
+    .bnav-item .ni{font-size:20px;}
+    .hero{
+      background:linear-gradient(135deg,var(--green-dark),var(--green));
+      color:white;border-radius:22px;padding:22px;display:flex;align-items:center;gap:16px;
+    }
+    .hero .ava{font-size:46px;background:rgba(255,255,255,.2);border-radius:50%;width:68px;height:68px;display:flex;align-items:center;justify-content:center;}
+    .home-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+    .home-card{width:min(980px,95vw);text-align:center;display:flex;flex-direction:column;gap:16px;align-items:center;}
+    .home-title{font-family:'Fredoka One',cursive;font-size:44px;color:var(--green-dark);}
+    .role-cards{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;}
+    .role-card{padding:26px 34px;border-radius:24px;cursor:pointer;font-weight:900;font-size:18px;min-width:210px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:transform .2s, box-shadow .2s;user-select:none;box-shadow:var(--shadow);}
+    .role-card:hover{transform:translateY(-6px) scale(1.04);box-shadow:var(--shadow-hover);}
+    .role-card .role-emoji{font-size:44px;}
+    .role-student{background:var(--green-light);}
+    .role-teacher{background:var(--sky);}
+    .role-admin{background:var(--lavender);}
+    .login-wrap{display:flex;flex:1;align-items:center;justify-content:center;padding:28px 18px;}
+    .login-box{background:white;border-radius:28px;padding:30px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(46,204,113,.2);}
+    .login-box h2{font-family:'Fredoka One',cursive;font-size:26px;color:var(--green-dark);margin-bottom:4px;}
+    .avatar-grid{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0;}
+    .avatar-circle{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;border:3px solid var(--green-light);background:var(--yellow-light);cursor:pointer;transition:all .2s;}
+    .avatar-circle.selected{border-color:var(--yellow);transform:scale(1.12);box-shadow:0 0 0 4px rgba(249,202,36,.35);}
+    .notif-wrap{position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+    .notif{background:white;border-left:5px solid var(--green);border-radius:var(--radius-sm);padding:12px 16px;box-shadow:0 8px 30px rgba(0,0,0,.15);font-weight:900;font-size:13px;animation:slideIn .25s ease;max-width:300px;pointer-events:none;}
+    .notif.warn{border-color:var(--yellow);}
+    .notif.bad{border-color:#E74C3C;}
+    @keyframes slideIn{from{transform:translateX(14px);opacity:0}to{transform:translateX(0);opacity:1}}
+    @media(max-width:780px){
+      .grid-3{grid-template-columns:1fr;}
+      .grid-2{grid-template-columns:1fr;}
+      .thead,.trow{grid-template-columns:2fr 1fr 1fr; }
+      .trow .hide-sm,.thead .hide-sm{display:none;}
+    }
+  
+    /* Teacher: student detail modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;z-index:2000;padding:18px;}
+    .modal-backdrop.active{display:flex;}
+    .modal{background:white;border-radius:18px;max-width:900px;width:100%;max-height:86vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);padding:18px;}
+    .modal-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+    .modal-title{font-family:'Fredoka One',cursive;color:var(--green-dark);font-size:20px;line-height:1.2;}
+    .modal-sub{color:var(--text-light);font-weight:800;font-size:12px;margin-top:4px;}
+
+  
+    body:not([data-role="student"]) .bottom-nav{display:none !important;}
+  </style>
+</head>
+
+<body>
+  <div class="notif-wrap" id="notif-wrap"></div>
+
+  <div class="modal-backdrop" id="t-student-modal">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Student details">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="t-student-modal-title">Student Details</div>
+          <div class="modal-sub" id="t-student-modal-sub">—</div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="closeTeacherStudentDetail()">✖ Close</button>
+      </div>
+      <div class="divider"></div>
+      <div id="t-student-modal-body"></div>
+    </div>
+  </div>
+
+
+  <!-- HOME -->
+  <div id="screen-home" class="screen active">
+    <div class="home-wrap">
+      <div class="home-card">
+        <div class="home-title">Tuklas Talino</div>
+        <div class="muted">🇵🇭 Filipino Learning + Gamified Collaboration • Baitang 1–6</div>
+
+        <div class="role-cards">
+          <div class="role-card role-student" onclick="go('screen-login-student')">
+            <span class="role-emoji">🎒</span> Mag-aaral
+          </div>
+          <div class="role-card role-teacher" onclick="go('screen-login-teacher')">
+            <span class="role-emoji">👩‍🏫</span> Guro
+          </div>
+          <div class="role-card role-admin" onclick="go('screen-login-admin')">
+            <span class="role-emoji">🛡️</span> Admin
+          </div>
+        </div>
+
+        <div class="card" style="text-align:left;width:min(980px,95vw)">
+          <div class="section-title">✨ Quick Demo Accounts</div>
+          <div class="muted">
+            <div><b>Admin:</b> username <b>admin</b> / password <b>admin123</b></div>
+            <div><b>Teacher:</b> username <b>teacher1</b> / password <b>teach123</b></div>
+            <div><b>Student IDs:</b> STU-2025-001 ... STU-2025-006</div>
+            <div style="margin-top:8px">Tip: Admin can create more accounts; Teacher can create groups & tasks.</div>
+          </div>
+          <div class="divider"></div>
+          <button class="btn btn-outline btn-sm" onclick="resetDemo()">♻️ Reset Demo Data</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STUDENT LOGIN -->
+  <div id="screen-login-student" class="screen">
+    <div class="top-nav">
+      <button class="btn btn-outline btn-sm" onclick="go('screen-home')">← Home</button>
+      <div class="logo">🎒 Student Login</div>
+      <div></div>
+    </div>
+    <div class="login-wrap">
+      <div class="login-box">
+        <h2>Mag-login, Estudyante!</h2>
+        <div class="muted">Piliin ang avatar at i-enter ang Student ID.</div>
+
+        <div class="divider"></div>
+
+        <div class="section-title">Avatar</div>
+        <div class="avatar-grid" id="stu-avatar-grid"></div>
+
+        <div class="divider"></div>
+
+        <div class="section-title">Student ID</div>
+        <input class="input-field" id="stu-id" placeholder="Hal. STU-2025-001"/>
+
+        <div class="divider"></div>
+        <button class="btn btn-green" style="width:100%;justify-content:center" onclick="loginStudent()">Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEACHER LOGIN -->
+  <div id="screen-login-teacher" class="screen">
+    <div class="top-nav">
+      <button class="btn btn-outline btn-sm" onclick="go('screen-home')">← Home</button>
+      <div class="logo">👩‍🏫 Teacher Login</div>
+      <div></div>
+    </div>
+    <div class="login-wrap">
+      <div class="login-box">
+        <h2>Mag-login, Guro!</h2>
+        <div class="muted">Gamitin ang teacher username & password.</div>
+
+        <div class="divider"></div>
+
+        <div class="section-title">Credentials</div>
+        <input class="input-field" id="t-username" placeholder="Username"/>
+        <div style="height:10px"></div>
+        <input class="input-field" id="t-password" placeholder="Password" type="password"/>
+
+        <div class="divider"></div>
+        <button class="btn btn-blue" style="width:100%;justify-content:center" onclick="loginTeacher()">Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN LOGIN -->
+  <div id="screen-login-admin" class="screen">
+    <div class="top-nav">
+      <button class="btn btn-outline btn-sm" onclick="go('screen-home')">← Home</button>
+      <div class="logo">🛡️ Admin Login</div>
+      <div></div>
+    </div>
+    <div class="login-wrap">
+      <div class="login-box">
+        <h2>Mag-login, Admin!</h2>
+        <div class="muted">Gamitin ang admin username & password.</div>
+
+        <div class="divider"></div>
+
+        <div class="section-title">Credentials</div>
+        <input class="input-field" id="a-username" placeholder="Username"/>
+        <div style="height:10px"></div>
+        <input class="input-field" id="a-password" placeholder="Password" type="password"/>
+
+        <div class="divider"></div>
+        <button class="btn btn-purple" style="width:100%;justify-content:center" onclick="loginAdmin()">Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STUDENT DASH -->
+  <div id="screen-student" class="screen">
+    <div class="top-nav">
+      <div class="logo">🌟 Tuklas Talino</div>
+      <div class="row">
+        <div class="pill">⚡ <span id="stu-xp">0</span> XP</div>
+        <button class="btn btn-outline btn-sm" onclick="logout()">Logout</button>
+      </div>
+    </div>
+
+    <div class="scroll">
+      <div class="hero">
+        <div class="ava" id="stu-ava">🦊</div>
+        <div style="flex:1">
+          <div style="font-family:'Fredoka One',cursive;font-size:20px" id="stu-greet">Mabuhay!</div>
+          <div class="muted" id="stu-meta">Baitang • Seksyon</div>
+          <div style="margin-top:10px">
+            <div class="row" style="justify-content:space-between">
+              <div class="muted" style="color:white;opacity:.9">Level <span id="stu-level">1</span></div>
+              <div class="muted" style="color:white;opacity:.9"><span id="stu-xp-pct">0%</span></div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="stu-xp-bar" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">📌 Araw-araw na Gawain</div>
+        <div id="daily-wrap"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">📚 Mga Module</div>
+        <div class="grid grid-3">
+          <button class="module-card" style="background:#D5F5E3" onclick="openSubject('Pagbasa')"><div class="icon">📖</div>Pagbasa</button>
+          <button class="module-card" style="background:#D6EAF8" onclick="openSubject('Bokabularyo')"><div class="icon">🔤</div>Bokabularyo</button>
+          <button class="module-card" style="background:#FDEBD0" onclick="openSubject('Panitikan')"><div class="icon">📜</div>Panitikan</button>
+          <button class="module-card" style="background:#FADBD8" onclick="openSubject('Oral Comm')"><div class="icon">🎙️</div>Oral Comm</button>
+          <button class="module-card" style="background:#FEF9C3" onclick="openSubject('Pagsulat')"><div class="icon">✍️</div>Pagsulat</button>
+          <button class="module-card" style="background:#E8DAEF" onclick="goStudentTab('groups')"><div class="icon">👥</div>Grupo</button>
+        </div>
+      </div>
+      <div class="card" id="stu-progress-card">
+        <div class="section-title">📊 Aking Progreso</div>
+        <div class="muted" style="margin-bottom:10px">
+          Makikita dito ang iyong natapos na aralin sa bawat module (progress tracking).
+        </div>
+        <div id="stu-progress-wrap"></div>
+      </div>
+
+      <div class="card" id="stu-upcoming-card">
+        <div class="section-title">⏰ Mga Paparating na Gawain</div>
+        <div class="muted" style="margin-bottom:10px">
+          Para sa time management: mga group tasks na may deadline at hindi pa tapos.
+        </div>
+        <div id="stu-upcoming-wrap"></div>
+      </div>
+
+
+      <div class="card" id="leaderboard-card">
+        <div class="section-title">🏆 Leaderboard (Seksyon)</div>
+        <div id="lb-wrap"></div>
+      </div>
+
+      
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <button id="bnav-stu-home" class="bnav-item active" onclick="goStudentTab('home')"><span class="ni">🏠</span>Home</button>
+      <button id="bnav-stu-groups" class="bnav-item" onclick="goStudentTab('groups')"><span class="ni">👥</span>Groups</button>
+      <button id="bnav-stu-badges" class="bnav-item" onclick="goStudentTab('badges')"><span class="ni">🏅</span>Badges</button>
+      <button id="bnav-stu-profile" class="bnav-item" onclick="goStudentTab('profile')"><span class="ni">👤</span>Profile</button>
+    </div>
+  </div>
+
+  <!-- STUDENT: SUBJECT LESSON LIST -->
+  <div id="screen-lessons" class="screen">
+    <div class="top-nav">
+      <button class="btn btn-outline btn-sm" onclick="go('screen-student')">← Dashboard</button>
+      <div class="logo" id="lessons-title">📚 Lessons</div>
+      <div class="pill">📌 <span id="lessons-count">0</span></div>
+    </div>
+    <div class="scroll">
+      <div class="card">
+        <div class="muted" id="lessons-sub">Mga aralin para sa iyong baitang.</div>
+      </div>
+      <div id="lessons-wrap"></div>
+    </div>
+  </div>
+
+  <!-- STUDENT: LESSON VIEW -->
+  <div id="screen-lesson" class="screen">
+    <div class="top-nav">
+      <button class="btn btn-outline btn-sm" onclick="backFromLesson()">← Back</button>
+      <div class="logo" id="lesson-title">📖 Lesson</div>
+      <div class="pill">⚡ +<span id="lesson-xp">0</span></div>
+    </div>
+    <div class="scroll">
+      <div class="card">
+        <div class="section-title">📘 Teksto</div>
+        <div class="muted" id="lesson-instructions"></div>
+        <div class="divider"></div>
+        <div id="lesson-passage" style="font-size:15px;line-height:1.8;font-weight:700"></div>
+
+        <div class="divider"></div>
+
+        <div class="row">
+          <button class="btn btn-blue" onclick="ttsSpeakPassage()">🔊 Pakinggan (TTS)</button>
+          <button class="btn btn-purple" onclick="startPronunciation()">🎤 Magsalita</button>
+          <button class="btn btn-outline" onclick="stopAllAudio()">⏹ Stop</button>
+        </div>
+
+        <div class="divider"></div>
+        <div id="speech-feedback"></div>
+      </div>
+
+      <div id="lesson-activity"></div>
+
+      <div class="card">
+        <div class="section-title">✅ Tapusin</div>
+        <div class="muted">Kapag natapos mo na ang gawain, pindutin ito para maitala ang progreso at XP.</div>
+        <div class="divider"></div>
+        <button class="btn btn-green" style="width:100%;justify-content:center" onclick="completeLesson()">🎉 Mark as Completed</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STUDENT: GROUPS -->
+  <div id="screen-stu-groups" class="screen">
+    <div class="top-nav">
+      <button class="btn btn-outline btn-sm" onclick="go('screen-student')">← Dashboard</button>
+      <div class="logo">👥 Mga Grupo</div>
+      <div></div>
+    </div>
+    <div class="scroll">
+      <div class="card" style="background:linear-gradient(135deg,var(--orange),#E67E22);color:white">
+        <div class="section-title" style="color:white">👥 Group Tasks</div>
+        <div class="muted" style="color:white;opacity:.9">Gawin ang tasks bago ang deadline. Ang guro ay makakakita ng progress at participation.</div>
+      </div>
+      <div id="stu-groups-wrap"></div>
+    </div>
+  </div>
+
+  <!-- STUDENT: BADGES -->
+  <div id="screen-stu-badges" class="screen">
+    <div class="top-nav">
+      <button class="btn btn-outline btn-sm" onclick="go('screen-student')">← Dashboard</button>
+      <div class="logo">🏅 Badges</div>
+      <div class="pill">⚡ <span id="badge-xp">0</span></div>
+    </div>
+    <div class="scroll">
+      <div class="card">
+        <div class="section-title">🌟 Achievements</div>
+        <div id="badges-wrap"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STUDENT: PROFILE -->
+  <div id="screen-stu-profile" class="screen">
+    <div class="top-nav">
+      <button class="btn btn-outline btn-sm" onclick="go('screen-student')">← Dashboard</button>
+      <div class="logo">👤 Profile</div>
+      <div></div>
+    </div>
+    <div class="scroll">
+      <div class="card">
+        <div class="section-title">Avatar</div>
+        <div class="muted">Palitan ang avatar mo (saved sa account).</div>
+        <div class="divider"></div>
+        <div class="avatar-grid" id="profile-avatar-grid"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">📊 Summary</div>
+        <div id="profile-summary"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEACHER DASH -->
+  <div id="screen-teacher" class="screen">
+    <div class="top-nav">
+      <div class="logo">👩‍🏫 Teacher Dashboard</div>
+      <div class="row">
+        <div class="pill">🏫 <span id="t-name">Teacher</span></div>
+        <button class="btn btn-outline btn-sm" onclick="logout()">Logout</button>
+      </div>
+    </div>
+    <div class="scroll">
+      <div class="card" style="background:linear-gradient(135deg,#2980B9,#3498DB);color:white">
+        <div class="section-title" style="color:white">📌 Monitoring</div>
+        <div class="muted" style="color:white;opacity:.9">Tingnan ang progreso, engagement, group participation, at reports.</div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">📈 Quick Stats</div>
+        <div class="grid grid-3" id="t-stats"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">👥 Group Manager</div>
+        <div class="muted">Gumawa ng grupo, mag-assign ng members, at maglagay ng tasks + deadline.</div>
+        <div class="divider"></div>
+
+        <div class="grid grid-2">
+          <div class="card" style="box-shadow:none;background:var(--bg)">
+            <div class="section-title">➕ Create Group</div>
+            <input class="input-field" id="t-group-name" placeholder="Group name (Hal. Grupo Sampaguita)"/>
+            <div style="height:10px"></div>
+            <input class="input-field" id="t-group-section" placeholder="Section (Hal. Bulaklak)"/>
+            <div style="height:10px"></div>
+            <button class="btn btn-green" onclick="teacherCreateGroup()">Create</button>
+          </div>
+
+          <div class="card" style="box-shadow:none;background:var(--bg)">
+            <div class="section-title">➕ Add Task</div>
+            <select class="input-field" id="t-task-group"></select>
+            <div style="height:10px"></div>
+            <input class="input-field" id="t-task-title" placeholder="Task title (Hal. Basahin ang Aralin 1)"/>
+            <div style="height:10px"></div>
+            <input class="input-field" id="t-task-deadline" type="date"/>
+            <div style="height:10px"></div>
+            <input class="input-field" id="t-task-xp" type="number" min="0" value="10" placeholder="XP"/>
+            <div style="height:10px"></div>
+            <button class="btn btn-blue" onclick="teacherAddTask()">Add Task</button>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section-title">📋 Groups</div>
+        <div id="t-groups-wrap"></div>
+      </div>
+
+      
+      <div class="card">
+        <div class="section-title">📚 Lesson Manager (Teacher-Created)</div>
+        <div class="muted">
+          Create Filipino lessons and activities for Grade 1–6 (supports the “learning modules and exercises” objective).
+          Lessons are saved in the system database (localStorage) for demo purposes.
+        </div>
+        <div class="divider"></div>
+
+        <div class="grid grid-2">
+          <div class="card" style="box-shadow:none;background:var(--bg)">
+            <div class="section-title">➕ Create Lesson</div>
+            <select class="input-field" id="t-lesson-grade">
+              <option value="1">Grade 1</option><option value="2">Grade 2</option><option value="3">Grade 3</option>
+              <option value="4">Grade 4</option><option value="5">Grade 5</option><option value="6">Grade 6</option>
+            </select>
+            <div style="height:10px"></div>
+            <select class="input-field" id="t-lesson-subject">
+              <option value="Pagbasa">Pagbasa</option>
+              <option value="Bokabularyo">Bokabularyo</option>
+              <option value="Panitikan">Panitikan</option>
+              <option value="Oral Comm">Oral Comm</option>
+              <option value="Pagsulat">Pagsulat</option>
+            </select>
+            <div style="height:10px"></div>
+            <input class="input-field" id="t-lesson-title" placeholder="Lesson title"/>
+            <div style="height:10px"></div>
+            <input class="input-field" id="t-lesson-xp" type="number" min="0" max="500" value="25" placeholder="XP reward"/>
+            <div style="height:10px"></div>
+            <textarea class="input-field" id="t-lesson-instructions" placeholder="Instructions (short)"></textarea>
+            <div style="height:10px"></div>
+            <textarea class="input-field" id="t-lesson-passage" placeholder="Passage / content text"></textarea>
+            <div style="height:10px"></div>
+            <input class="input-field" id="t-lesson-speechTarget" placeholder="Speech target (optional, for pronunciation practice)"/>
+          </div>
+
+          <div class="card" style="box-shadow:none;background:var(--bg)">
+            <div class="section-title">🧩 Optional Activities</div>
+            <div class="muted">MCQ (1 question) and/or Writing prompt (simple capstone scope).</div>
+            <div class="divider"></div>
+
+            <div class="section-title">MCQ (optional)</div>
+            <input class="input-field" id="t-mcq-q" placeholder="Question"/>
+            <div style="height:10px"></div>
+            <input class="input-field" id="t-mcq-a" placeholder="Choice A"/>
+            <div style="height:10px"></div>
+            <input class="input-field" id="t-mcq-b" placeholder="Choice B"/>
+            <div style="height:10px"></div>
+            <input class="input-field" id="t-mcq-c" placeholder="Choice C"/>
+            <div style="height:10px"></div>
+            <input class="input-field" id="t-mcq-d" placeholder="Choice D"/>
+            <div style="height:10px"></div>
+            <select class="input-field" id="t-mcq-correct">
+              <option value="0">Correct: A</option>
+              <option value="1">Correct: B</option>
+              <option value="2">Correct: C</option>
+              <option value="3">Correct: D</option>
+            </select>
+
+            <div class="divider"></div>
+            <div class="section-title">Writing Prompt (optional)</div>
+            <textarea class="input-field" id="t-writing-prompt" placeholder="Writing prompt"></textarea>
+
+            <div class="divider"></div>
+            <button class="btn btn-green" onclick="teacherCreateLesson()">Create Lesson</button>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="section-title">📋 Recently Created Lessons</div>
+        <div id="t-lessons-wrap" class="muted">No teacher-created lessons yet.</div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">👨‍🎓 Students (Monitoring Table)</div>
+        <div class="row">
+          <select class="input-field" id="t-filter-section" style="max-width:280px" onchange="renderTeacherStudents()"></select>
+          <button class="btn btn-outline btn-sm" onclick="exportStudentsCSV()">⬇️ Export CSV</button>
+          <button class="btn btn-outline btn-sm" onclick="exportLogsCSV()">⬇️ Export Activity Logs</button>
+          <button class="btn btn-outline btn-sm" onclick="downloadSummaryReport()">🧾 Download Summary Report</button>
+        </div>
+        <div class="divider"></div>
+        <div class="table">
+          <div class="thead">
+            <div>Student</div>
+            <div>XP</div>
+            <div>Lessons</div>
+            <div class="hide-sm">Quiz Avg</div>
+            <div class="hide-sm">Last Active</div>
+          </div>
+          <div id="t-students-table"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN DASH -->
+  <div id="screen-admin" class="screen">
+    <div class="top-nav">
+      <div class="logo">🛡️ Admin Dashboard</div>
+      <div class="row">
+        <div class="pill">⚙️ Manage Accounts</div>
+        <button class="btn btn-outline btn-sm" onclick="logout()">Logout</button>
+      </div>
+    </div>
+
+    <div class="scroll">
+      <div class="card" style="background:linear-gradient(135deg,var(--purple),#8E44AD);color:white">
+        <div class="section-title" style="color:white">👥 Account Management</div>
+        <div class="muted" style="color:white;opacity:.9">Magdagdag at mag-manage ng Students at Teachers.</div>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="section-title">👨‍🎓 Add Student</div>
+          <input class="input-field" id="a-stu-id" placeholder="Student ID (unique)"/>
+          <div style="height:10px"></div>
+          <input class="input-field" id="a-stu-name" placeholder="Name"/>
+          <div style="height:10px"></div>
+          <input class="input-field" id="a-stu-grade" type="number" min="1" max="6" placeholder="Grade (1-6)"/>
+          <div style="height:10px"></div>
+          <input class="input-field" id="a-stu-section" placeholder="Section"/>
+          <div class="divider"></div>
+          <button class="btn btn-green" onclick="adminAddStudent()">Add Student</button>
+        </div>
+
+        <div class="card">
+          <div class="section-title">👩‍🏫 Add Teacher</div>
+          <input class="input-field" id="a-t-username" placeholder="Username (unique)"/>
+          <div style="height:10px"></div>
+          <input class="input-field" id="a-t-name" placeholder="Teacher Name"/>
+          <div style="height:10px"></div>
+          <input class="input-field" id="a-t-password" placeholder="Password"/>
+          <div class="divider"></div>
+          <button class="btn btn-blue" onclick="adminAddTeacher()">Add Teacher</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">📋 Students</div>
+        <div class="row">
+          <select class="input-field" id="a-stu-filter" style="max-width:260px" onchange="renderAdminStudents()">
+            <option value="ACTIVE">Active</option>
+            <option value="ARCHIVED">Archived</option>
+            <option value="ALL">All</option>
+          </select>
+          <button class="btn btn-outline btn-sm" onclick="renderAdminStudents()">Refresh</button>
+        </div>
+        <div class="divider"></div>
+        <div id="admin-students-wrap"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">📋 Teachers</div>
+        <div class="row">
+          <select class="input-field" id="a-t-filter" style="max-width:260px" onchange="renderAdminTeachers()">
+            <option value="ACTIVE">Active</option>
+            <option value="ARCHIVED">Archived</option>
+            <option value="ALL">All</option>
+          </select>
+          <button class="btn btn-outline btn-sm" onclick="renderAdminTeachers()">Refresh</button>
+        </div>
+        <div class="divider"></div>
+        <div id="admin-teachers-wrap"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">🗂️ Account History (Audit Trail)</div>
+        <div class="muted">Read-only record of maintenance actions (archive/reactivate/reset) for ethical record-keeping.</div>
+        <div class="divider"></div>
+        <div class="row">
+          <select class="input-field" id="a-hist-filter" style="max-width:320px" onchange="renderAdminHistory()">
+            <option value="ALL">All</option>
+            <option value="ACCOUNT">Account changes</option>
+            <option value="RESET">Resets</option>
+          </select>
+          <button class="btn btn-outline btn-sm" onclick="renderAdminHistory()">Refresh</button>
+        </div>
+        <div class="divider"></div>
+        <div id="admin-history-wrap"></div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- TEACHER: EDIT LESSON MODAL (edit-only, no delete) -->
+  <div id="t-lesson-edit-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9998;align-items:center;justify-content:center;padding:18px;">
+    <div class="card" style="width:min(820px,95vw);max-height:90vh;overflow:auto">
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <div class="section-title">✏️ Edit Lesson (Teacher-Created)</div>
+        <button class="btn btn-outline btn-sm" onclick="closeTeacherEditModal()">✖ Close</button>
+      </div>
+      <div class="muted">Edit is allowed only for teacher-created lessons. Deletion is disabled for ethical record-keeping.</div>
+      <div class="divider"></div>
+
+      <input type="hidden" id="t-edit-lessonId"/>
+
+      <div class="grid grid-2">
+        <div>
+          <div class="muted">Title</div>
+          <input class="input-field" id="t-edit-title"/>
+          <div style="height:10px"></div>
+
+          <div class="muted">XP</div>
+          <input class="input-field" id="t-edit-xp" type="number" min="0" max="500"/>
+          <div style="height:10px"></div>
+
+          <div class="muted">Instructions</div>
+          <textarea class="input-field" id="t-edit-instructions"></textarea>
+          <div style="height:10px"></div>
+
+          <div class="muted">Passage / Content</div>
+          <textarea class="input-field" id="t-edit-passage"></textarea>
+          <div style="height:10px"></div>
+
+          <div class="muted">Speech Target (optional)</div>
+          <input class="input-field" id="t-edit-speechTarget"/>
+        </div>
+
+        <div>
+          <div class="section-title">Optional MCQ (1)</div>
+          <input class="input-field" id="t-edit-mcq-q" placeholder="Question"/>
+          <div style="height:10px"></div>
+          <input class="input-field" id="t-edit-mcq-a" placeholder="Choice A"/>
+          <div style="height:10px"></div>
+          <input class="input-field" id="t-edit-mcq-b" placeholder="Choice B"/>
+          <div style="height:10px"></div>
+          <input class="input-field" id="t-edit-mcq-c" placeholder="Choice C"/>
+          <div style="height:10px"></div>
+          <input class="input-field" id="t-edit-mcq-d" placeholder="Choice D"/>
+          <div style="height:10px"></div>
+          <select class="input-field" id="t-edit-mcq-correct">
+            <option value="0">Correct: A</option>
+            <option value="1">Correct: B</option>
+            <option value="2">Correct: C</option>
+            <option value="3">Correct: D</option>
+          </select>
+
+          <div class="divider"></div>
+          <div class="section-title">Optional Writing Prompt</div>
+          <textarea class="input-field" id="t-edit-writing-prompt" placeholder="Writing prompt"></textarea>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <button class="btn btn-green" onclick="teacherSaveLessonEdits()">💾 Save Changes</button>
+    </div>
+  </div>
+
+  <script>
+    const DB_KEY = "tt_db_v1";
+    const SCHEMA_VERSION = 3;
+
+    function nowISO(){ return new Date().toISOString(); }
+
+    function loadDB(){
+      const raw = localStorage.getItem(DB_KEY);
+      if(!raw) return null;
+      try { return JSON.parse(raw); } catch { return null; }
+    }
+
+    function saveDB(db){
+      localStorage.setItem(DB_KEY, JSON.stringify(db));
+    }
+
+        function seedLessons(){
+      /**
+       * Demo lesson library (capstone-friendly).
+       * Goal: each Grade 1–6 student sees at least ONE lesson per subject:
+       * Pagbasa, Bokabularyo, Panitikan, Oral Comm, Pagsulat.
+       */
+      const lessons = [];
+
+      const subjectDefs = {
+        "Pagbasa": {
+          icon: "📖",
+          make: (g) => ({
+            title: `Pagbasa ${g}: Maikling Kuwento`,
+            duration: "10 minuto",
+            passage: g<=2
+              ? "Si Ana ay may bola. Pula ang bola. Masaya si Ana kapag naglalaro siya sa labas."
+              : "Sa aming barangay, mahalaga ang pagtutulungan. Kapag may proyekto, sama-sama ang mga tao upang matapos ito nang maayos.",
+            instructions: "Basahin ang teksto. Sagutin ang tanong.",
+            activityItems: [
+              {
+                q: g<=2 ? "Ano ang kulay ng bola?" : "Ano ang pangunahing ideya ng teksto?",
+                options: g<=2 ? ["Pula","Asul","Dilaw","Itim"] : ["Pagkain sa barangay","Pagtutulungan sa komunidad","Pag-alis sa lugar","Pagbili ng bagong gamit"],
+                correct: g<=2 ? 0 : 1
+              }
+            ],
+            speechTarget: g<=2 ? "Si Ana ay may bola." : "Mahalaga ang pagtutulungan."
+          })
+        },
+        "Bokabularyo": {
+          icon: "🔤",
+          make: (g) => ({
+            title: `Bokabularyo ${g}: Bahagi ng Pananalita`,
+            duration: "10 minuto",
+            passage: g<=2
+              ? "Ang pangngalan ay pangalan ng tao, bagay, hayop, at lugar. Halimbawa: bata, lapis, aso, Maynila."
+              : "Ang pangatnig ay salitang nag-uugnay ng mga salita o pangungusap. Halimbawa: at, ngunit, dahil, kaya.",
+            instructions: "Piliin ang tamang sagot.",
+            activityItems: [
+              {
+                q: g<=2 ? "Alin ang pangngalan?" : "Alin ang pangatnig?",
+                options: g<=2 ? ["Tumakbo","Bahay","Masaya","Mabilis"] : ["Maganda","Dahil","Tahimik","Bilog"],
+                correct: g<=2 ? 1 : 1
+              }
+            ],
+            speechTarget: g<=2 ? "Ang pangngalan ay pangalan ng tao, bagay, hayop, at lugar." : "Ang pangatnig ay salitang nag-uugnay."
+          })
+        },
+        "Panitikan": {
+          icon: "📜",
+          make: (g) => ({
+            title: `Panitikan ${g}: Tula at Aral`,
+            duration: "12 minuto",
+            passage:
+`Sa umaga'y liwanag, sa gabi'y bituin,
+Sa puso'y pag-asa, sa isip ay giting.
+Kapag may pagsubok, huwag bibitiw,
+Pagpupunyagi ang susi sa tagumpay.`,
+            instructions: "Basahin ang tula. Sagutin ang tanong.",
+            activityItems: [
+              {
+                q: "Ano ang mensahe ng tula?",
+                options: ["Huwag nang mag-aral","Sumuko sa pagsubok","Magpursige at huwag bibitiw","Umiwas sa tao"],
+                correct: 2
+              }
+            ],
+            speechTarget: "Pagpupunyagi ang susi sa tagumpay."
+          })
+        },
+        "Oral Comm": {
+          icon: "🎙️",
+          make: (g) => ({
+            title: `Oral Comm ${g}: Malinaw na Pagpapahayag`,
+            duration: "10 minuto",
+            passage: g<=2
+              ? "Sabihin: \"Magandang araw po! Ako si _____.\""
+              : "Magbigay ng maikling opinyon (30–45 segundo) tungkol sa: \"Bakit mahalaga ang disiplina?\"",
+            instructions: "Pindutin ang Pakinggan, pagkatapos ay Magsalita. Ulitin nang malinaw.",
+            oralTask: {
+              prompts: g<=2
+                ? ["Batiin ang guro.","Sabihin ang iyong pangalan.","Sabihin: Salamat po!"]
+                : ["Ibigay ang opinyon mo.","Magbigay ng 2 dahilan.","Magbigay ng isang halimbawa."]
+            },
+            speechTarget: g<=2
+              ? "Magandang araw po! Ako si _____."
+              : "Mahalaga ang disiplina dahil nakatutulong ito sa pag-abot ng mga layunin."
+          })
+        },
+        "Pagsulat": {
+          icon: "✍️",
+          make: (g) => ({
+            title: `Pagsulat ${g}: Talatang Sanaysay`,
+            duration: "15 minuto",
+            passage: g<=2
+              ? "Sumulat ng 3 pangungusap tungkol sa iyong paboritong pagkain."
+              : "Sumulat ng 5–6 pangungusap na sumasagot: \"Paano mo maipapakita ang pagtutulungan sa bahay o paaralan?\"",
+            instructions: "Sumulat nang malinaw. Gumamit ng halimbawa.",
+            writingTask: {
+              prompt: g<=2
+                ? "Isulat ang 3 pangungusap. Banggitin kung bakit mo ito gusto."
+                : "Isulat ang talata. Magbigay ng 2 halimbawa ng pagtutulungan."
+            },
+            speechTarget: g<=2 ? "Gusto ko ang ____ dahil ____." : "Pagtutulungan sa bahay o paaralan."
+          })
+        }
+      };
+
+      const subjects = ["Pagbasa","Bokabularyo","Panitikan","Oral Comm","Pagsulat"];
+      for(let grade=1; grade<=6; grade++){
+        for(const subject of subjects){
+          const idPrefix = `G${grade}-${subjectDefs[subject].icon ? "" : ""}`;
+          const baseId =
+            subject==="Pagbasa" ? "PAG" :
+            subject==="Bokabularyo" ? "WIK" :
+            subject==="Panitikan" ? "PAN" :
+            subject==="Oral Comm" ? "ORA" :
+            "SUL";
+          const lessonId = `G${grade}-${baseId}-01`;
+          const xp = 18 + grade*4 + (subject==="Pagsulat" ? 6 : subject==="Oral Comm" ? 4 : 0);
+
+          const body = subjectDefs[subject].make(grade);
+          lessons.push({
+            gradeLevel: grade,
+            subject,
+            lessonId,
+            title: body.title,
+            duration: body.duration,
+            xp,
+            passage: body.passage,
+            instructions: body.instructions,
+            activityItems: body.activityItems,
+            writingTask: body.writingTask,
+            oralTask: body.oralTask,
+            speechTarget: body.speechTarget
+          });
+        }
+      }
+
+      return lessons;
+    }
+
+    function seedDB(){
+      const lessons = seedLessons();
+      const students = {
+        "STU-2025-001": { id:"STU-2025-001", name:"Lia", gradeLevel:1, section:"Bulaklak", avatar:"🦋", xp:0, badges:[], completedLessons:{}, quizHistory:[], writingSubmissions:{}, speechAttempts:{}, createdAt:nowISO(), updatedAt:nowISO(), lastActiveAt:null , status:"active"},
+        "STU-2025-002": { id:"STU-2025-002", name:"Noah", gradeLevel:2, section:"Bituin", avatar:"🐸", xp:0, badges:[], completedLessons:{}, quizHistory:[], writingSubmissions:{}, speechAttempts:{}, createdAt:nowISO(), updatedAt:nowISO(), lastActiveAt:null , status:"active"},
+        "STU-2025-003": { id:"STU-2025-003", name:"Juan", gradeLevel:3, section:"Bulaklak", avatar:"🦊", xp:0, badges:[], completedLessons:{}, quizHistory:[], writingSubmissions:{}, speechAttempts:{}, createdAt:nowISO(), updatedAt:nowISO(), lastActiveAt:null , status:"active"},
+        "STU-2025-004": { id:"STU-2025-004", name:"Maya", gradeLevel:4, section:"Matalino", avatar:"🐨", xp:0, badges:[], completedLessons:{}, quizHistory:[], writingSubmissions:{}, speechAttempts:{}, createdAt:nowISO(), updatedAt:nowISO(), lastActiveAt:null , status:"active"},
+        "STU-2025-005": { id:"STU-2025-005", name:"Paolo", gradeLevel:5, section:"Masigasig", avatar:"🦁", xp:0, badges:[], completedLessons:{}, quizHistory:[], writingSubmissions:{}, speechAttempts:{}, createdAt:nowISO(), updatedAt:nowISO(), lastActiveAt:null , status:"active"},
+        "STU-2025-006": { id:"STU-2025-006", name:"Aira", gradeLevel:6, section:"Mapanuri", avatar:"🐼", xp:0, badges:[], completedLessons:{}, quizHistory:[], writingSubmissions:{}, speechAttempts:{}, createdAt:nowISO(), updatedAt:nowISO(), lastActiveAt:null , status:"active"},
+      };
+
+      const teachers = {"teacher1": { username:"teacher1", name:"Teacher 1", password:"teach123", active:true, createdAt:nowISO() }};
+      const admins = {"admin": { username:"admin", name:"System Admin", password:"admin123", createdAt:nowISO() }};
+      const groups = {};
+      const logs = [];
+      const db = { version: SCHEMA_VERSION, lessons, students, teachers, admins, groups, logs };
+      saveDB(db);
+      return db;
+    }
+
+    function getDB(){
+      let db = loadDB();
+      if(!db || !db.version) db = seedDB();
+      if(db.version < SCHEMA_VERSION){
+        db = migrateDB(db);
+      }
+      return db;
+    }
+
+    function migrateDB(db){
+      // Why: users may already have old localStorage; we merge new lessons without wiping progress.
+      // Also: subject name update (Wika -> Bokabularyo) to match Chapters 1–3 terminology.
+      const SUBJECT_RENAMES = { "Wika": "Bokabularyo" };
+
+      function renameSubject(s){ return SUBJECT_RENAMES[s] || s; }
+
+      // 1) Rename subjects in existing lessons (if any old data remains)
+      (db.lessons || []).forEach(l => { l.subject = renameSubject(l.subject); });
+
+      // 2) Migrate completed lesson keys + stored subject labels so progress is preserved
+      const students = db.students || {};
+      Object.values(students).forEach(st => {
+        if(!st.status) st.status = "active";
+        // completedLessons key format: grade||subject||lessonId
+        const oldComp = st.completedLessons || {};
+        const newComp = {};
+        Object.entries(oldComp).forEach(([k,v]) => {
+          const parts = String(k).split("||");
+          if(parts.length===3){
+            const [g, subj, lid] = parts;
+            const newSubj = renameSubject(subj);
+            const nk = `${g}||${newSubj}||${lid}`;
+            const nv = Object.assign({}, v, { subject: renameSubject(v?.subject) });
+            newComp[nk] = nv;
+          } else {
+            newComp[k] = v;
+          }
+        });
+        st.completedLessons = newComp;
+        st.updatedAt = nowISO();
+      });
+
+      const fresh = seedLessons(); // latest bundled lessons
+      const byKey = new Map();
+      (db.lessons || []).forEach(l => byKey.set(`${l.gradeLevel}||${l.subject}||${l.lessonId}`, l));
+      fresh.forEach(l => {
+        const k = `${l.gradeLevel}||${l.subject}||${l.lessonId}`;
+        if(!byKey.has(k)) byKey.set(k, l);
+      });
+      db.lessons = Array.from(byKey.values());
+      db.version = SCHEMA_VERSION;
+      saveDB(db);
+      return db;
+    }
+
+    function logEvent(actorRole, actorId, type, meta){
+      const db = getDB();
+      db.logs.unshift({ id: "LOG-" + Math.random().toString(16).slice(2), at: nowISO(), actorRole, actorId, type, meta: meta || {} });
+      saveDB(db);
+    }
+
+    const session = { role:null, studentId:null, teacherUsername:null, adminUsername:null, currentSubject:null, currentLessonKey:null, avatarPick:"🦊" };
+
+    function go(screenId){
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const el = document.getElementById(screenId);
+      if(el) el.classList.add('active');
+    }
+
+    function setRole(role){ document.body.dataset.role = role || ""; }
+
+    function notify(msg, level="ok"){
+      const wrap = document.getElementById('notif-wrap');
+      const div = document.createElement('div');
+      div.className = "notif " + (level==="warn"?"warn":level==="bad"?"bad":"");
+      div.textContent = msg;
+      wrap.appendChild(div);
+      setTimeout(()=>div.remove(), 2600);
+    }
+
+function logout(){
+      setRole("");
+      stopAllAudio();
+      session.role=null;
+      session.studentId=null;
+      session.teacherUsername=null;
+      session.adminUsername=null;
+      session.currentSubject=null;
+      session.currentLessonKey=null;
+
+      // Ensure no leftover student navigation is visible after logging out from teacher/admin.
+      ["screen-student","screen-lessons","screen-lesson","screen-stu-groups","screen-stu-badges","screen-stu-profile"].forEach(id=>{
+        const el=document.getElementById(id);
+        if(el) el.classList.remove("active");
+      });
+
+      // Reset bottom nav state (safe even if not visible)
+      const ids=["bnav-stu-home","bnav-stu-groups","bnav-stu-badges","bnav-stu-profile"];
+      ids.forEach(id=>{
+        const el=document.getElementById(id);
+        if(el) el.classList.remove("active");
+      });
+      const homeBtn=document.getElementById("bnav-stu-home");
+      if(homeBtn) homeBtn.classList.add("active");
+
+      notify("Naka-logout na. 👋");
+      go('screen-home');
+    }
+
+
+    function resetDemo(){
+      localStorage.removeItem(DB_KEY);
+      seedDB();
+      notify("Demo data reset ✅");
+      go('screen-home');
+      renderAvatars();
+    }
+
+    const AVATARS = ["🦊","🐨","🐸","🦁","🐼","🦋","🐰","🐯","🦄","🐵","🐙","🐧"];
+
+    function renderAvatars(){
+      const grid = document.getElementById('stu-avatar-grid');
+      const pgrid = document.getElementById('profile-avatar-grid');
+      if(grid){
+        grid.innerHTML = AVATARS.map(a => `<div class="avatar-circle ${a===session.avatarPick?'selected':''}" onclick="pickAvatar('${a}', 'student')">${a}</div>`).join("");
+      }
+      if(pgrid){
+        const db = getDB();
+        const st = session.studentId ? db.students[session.studentId] : null;
+        const cur = st?.avatar || session.avatarPick;
+        pgrid.innerHTML = AVATARS.map(a => `<div class="avatar-circle ${a===cur?'selected':''}" onclick="pickAvatar('${a}', 'profile')">${a}</div>`).join("");
+      }
+    }
+
+    function pickAvatar(emoji, mode){
+      session.avatarPick = emoji;
+      if(mode === 'student') renderAvatars();
+      if(mode === 'profile'){
+        const db = getDB();
+        const st = db.students[session.studentId];
+        if(!st) return;
+        st.avatar = emoji;
+        st.updatedAt = nowISO();
+        saveDB(db);
+        logEvent("student", st.id, "avatar_changed", { avatar: emoji });
+        notify("Avatar updated ✅");
+        renderStudentDash();
+        renderAvatars();
+      }
+    }
+
+    function loginStudent(){
+      const id = (document.getElementById('stu-id').value || "").trim();
+      if(!id){ notify("Ilagay ang Student ID.", "warn"); return; }
+      const db = getDB();
+      const st = db.students[id];
+      if(!st){ notify("Walang account na may ganitong ID.", "bad"); return; }
+      if(st.archived){ notify("Archived ang account na ito. Makipag-ugnayan sa admin.", "bad"); return; }
+      if(st.status==="archived"){ notify("Student account is archived. Please contact your teacher/admin.", "bad"); return; }
+
+      session.role="student"; session.studentId=id;
+      setRole("student");
+      st.avatar = session.avatarPick || st.avatar;
+      st.lastActiveAt = nowISO();
+      st.updatedAt = nowISO();
+      saveDB(db);
+      logEvent("student", st.id, "login", {});
+      notify(`Welcome, ${st.name}! 🎉`);
+      go('screen-student');
+      renderStudentDash();
+    }
+
+    function loginTeacher(){
+      const u = (document.getElementById('t-username').value || "").trim();
+      const p = (document.getElementById('t-password').value || "").trim();
+      if(!u || !p){ notify("Ilagay ang username at password.", "warn"); return; }
+      const db = getDB();
+      const t = db.teachers[u];
+      if(!t || t.password !== p){ notify("Invalid credentials.", "bad"); return; }
+      if(t.inactive || t.archived){ notify("Archived/Inactive ang teacher account. Makipag-ugnayan sa admin.", "bad"); return; }
+      if(t.active===false){ notify("Teacher account is inactive. Please contact admin.", "bad"); return; }
+
+      session.role="teacher"; session.teacherUsername=u;
+      setRole("teacher");
+      logEvent("teacher", u, "login", {});
+      notify(`Welcome, ${t.name}! 👩‍🏫`);
+      go('screen-teacher');
+      renderTeacherDash();
+    }
+
+    function loginAdmin(){
+      const u = (document.getElementById('a-username').value || "").trim();
+      const p = (document.getElementById('a-password').value || "").trim();
+      if(!u || !p){ notify("Ilagay ang username at password.", "warn"); return; }
+      const db = getDB();
+      const a = db.admins[u];
+      if(!a || a.password !== p){ notify("Invalid credentials.", "bad"); return; }
+      session.role="admin"; session.adminUsername=u;
+      setRole("admin");
+      logEvent("admin", u, "login", {});
+      notify(`Welcome, ${a.name}! 🛡️`);
+      go('screen-admin');
+      renderAdminDash();
+    }
+
+    function levelOfXP(xp){ return Math.floor(xp/150) + 1; }
+    function xpPct(xp){ return Math.min(100, Math.round(((xp % 150) / 150) * 100)); }
+
+    function studentLessonsForSubject(db, st, subject){
+      return db.lessons.filter(l => l.gradeLevel === st.gradeLevel && l.subject === subject).sort((a,b)=>a.lessonId.localeCompare(b.lessonId));
+    }
+
+    function dayKey(){
+      const d=new Date();
+      return d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();
+    }
+
+    function pickDailySubject(){
+      const subjects=["Pagbasa","Bokabularyo","Panitikan","Oral Comm","Pagsulat"];
+      return subjects[dayKey()%subjects.length];
+    }
+
+    function subjectIcon(subject){
+      const map = {"Pagbasa":"📖","Bokabularyo":"🔤","Panitikan":"📜","Oral Comm":"🎙️","Pagsulat":"✍️"};
+      return map[subject] || "📚";
+    }
+
+    function renderDaily(db, st){
+      const wrap = document.getElementById('daily-wrap');
+      if(!wrap) return;
+      const subject = pickDailySubject();
+      const pool = studentLessonsForSubject(db, st, subject);
+      const lesson = pool.length ? pool[dayKey()%pool.length] : null;
+
+      const quizCard = `
+        <div class="lesson-card" style="border-color:var(--purple)" onclick="startQuickQuiz()">
+          <div class="lesson-icon">🧩</div>
+          <div>
+            <div style="font-weight:900">Mini Quiz</div>
+            <div class="muted">5 tanong • +50 XP (depende sa score)</div>
+          </div>
+          <div class="lesson-xp">+ up to 50 XP</div>
+        </div>
+      `;
+
+      const lessonCard = lesson ? `
+        <div class="lesson-card" onclick="openLesson('${lesson.gradeLevel}||${lesson.subject}||${lesson.lessonId}')">
+          <div class="lesson-icon">${subjectIcon(lesson.subject)}</div>
+          <div>
+            <div style="font-weight:900">${lesson.title}</div>
+            <div class="muted">${lesson.subject} • ${lesson.duration}</div>
+          </div>
+          <div class="lesson-xp">+${lesson.xp} XP</div>
+        </div>
+      ` : `<div class="card"><div class="muted">Walang daily lesson para sa ${subject}. (Add more lessons to DB.)</div></div>`;
+
+      wrap.innerHTML = lessonCard + quizCard;
+    }
+
+    function goStudentTab(tab){
+      if(session.role !== "student"){ notify("Student view only.", "warn"); return; }
+      document.getElementById('bnav-stu-home').classList.toggle('active', tab==='home');
+      document.getElementById('bnav-stu-groups').classList.toggle('active', tab==='groups');
+      document.getElementById('bnav-stu-badges').classList.toggle('active', tab==='badges');
+      document.getElementById('bnav-stu-profile').classList.toggle('active', tab==='profile');
+
+      if(tab==='home') go('screen-student');
+      if(tab==='groups') { go('screen-stu-groups'); renderStudentGroups(); }
+      if(tab==='badges') { go('screen-stu-badges'); renderBadges(); }
+      if(tab==='profile') { go('screen-stu-profile'); renderProfile(); }
+    }
+
+    function renderLeaderboard(db, st){
+      const wrap = document.getElementById('lb-wrap');
+      if(!wrap) return;
+      const peers = Object.values(db.students).filter(x => x.section === st.section).sort((a,b)=>b.xp-a.xp).slice(0,10);
+      if(!peers.length){ wrap.innerHTML = `<div class="muted">Walang students sa section.</div>`; return; }
+      wrap.innerHTML = peers.map((p, idx) => `
+        <div class="lesson-card" style="cursor:default;border-color:${idx===0?'var(--yellow)':'var(--green)'}">
+          <div class="lesson-icon">${p.avatar || "👤"}</div>
+          <div style="flex:1">
+            <div style="font-weight:900">${idx+1}. ${p.name} ${p.id===st.id ? "← Ikaw" : ""}</div>
+            <div class="muted">Baitang ${p.gradeLevel} • ${p.section}</div>
+          </div>
+          <div class="lesson-xp">${p.xp} XP</div>
+        </div>
+      `).join("");
+    }
+
+    
+    function completedCountBySubject(st, subject){
+      return Object.values(st.completedLessons || {}).filter(x => x && x.subject === subject).length;
+    }
+
+    function renderStudentProgress(db, st){
+      const wrap = document.getElementById('stu-progress-wrap');
+      if(!wrap) return;
+
+      const subjects = ["Pagbasa","Bokabularyo","Panitikan","Oral Comm","Pagsulat"];
+      const totalBySubject = {};
+      for(const s of subjects){
+        totalBySubject[s] = db.lessons.filter(l => l.gradeLevel === st.gradeLevel && l.subject === s).length;
+      }
+
+      wrap.innerHTML = subjects.map(subj => {
+        const total = totalBySubject[subj] || 0;
+        const done = completedCountBySubject(st, subj);
+        const pct = total ? Math.round((done/total)*100) : 0;
+
+        return `
+          <div class="lesson-card" style="cursor:pointer;border-color:var(--green)" onclick="openSubject('${subj}')">
+            <div class="lesson-icon">${subjectIcon(subj)}</div>
+            <div style="flex:1">
+              <div style="font-weight:900">${escapeHTML(subj)}</div>
+              <div class="muted">${done}/${total} completed</div>
+              <div style="margin-top:8px">
+                <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+              </div>
+            </div>
+            <div class="lesson-xp">${pct}%</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderUpcomingTasks(db, st){
+      const wrap = document.getElementById('stu-upcoming-wrap');
+      if(!wrap) return;
+
+      const tasks = [];
+      for(const g of Object.values(db.groups || {})){
+        if(g.section !== st.section) continue;
+        if(!g.memberIds?.includes(st.id)) continue;
+
+        for(const t of (g.tasks || [])){
+          const done = !!t.statusByStudent?.[st.id];
+          if(done) continue;
+          if(!t.deadline) continue;
+
+          const dt = new Date(t.deadline);
+          if(isNaN(dt.getTime())) continue;
+
+          tasks.push({
+            groupName: g.name,
+            groupId: g.id,
+            taskId: t.id,
+            title: t.title,
+            deadline: t.deadline,
+            xp: t.xp || 0,
+            overdue: dt.getTime() < Date.now()
+          });
+        }
+      }
+
+      tasks.sort((a,b)=>new Date(a.deadline)-new Date(b.deadline));
+
+      if(!tasks.length){
+        wrap.innerHTML = `<div class="muted">Wala kang paparating na group tasks na may deadline. ✅</div>`;
+        return;
+      }
+
+      wrap.innerHTML = tasks.slice(0,5).map(t => `
+        <div class="lesson-card" style="cursor:default;border-color:${t.overdue?'#E74C3C':'var(--yellow)'}">
+          <div class="lesson-icon">${t.overdue?'⏰':'📌'}</div>
+          <div style="flex:1">
+            <div style="font-weight:900">${escapeHTML(t.title)}</div>
+            <div class="muted">Group: ${escapeHTML(t.groupName)} • Deadline: ${escapeHTML(t.deadline)}</div>
+          </div>
+          <div class="lesson-xp">+${t.xp} XP</div>
+        </div>
+      `).join("");
+    }
+
+
+    function renderStudentDash(){
+      const db = getDB();
+      const st = db.students[session.studentId];
+      if(!st) return;
+      document.getElementById('stu-xp').textContent = st.xp;
+      document.getElementById('stu-ava').textContent = st.avatar || "🦊";
+      document.getElementById('stu-greet').textContent = `Mabuhay, ${st.name}! 👋`;
+      document.getElementById('stu-meta').textContent = `Baitang ${st.gradeLevel} • ${st.section}`;
+      const lvl = levelOfXP(st.xp);
+      const pct = xpPct(st.xp);
+      document.getElementById('stu-level').textContent = lvl;
+      document.getElementById('stu-xp-pct').textContent = pct + "%";
+      document.getElementById('stu-xp-bar').style.width = pct + "%";
+      renderDaily(db, st);
+      renderStudentProgress(db, st);
+      renderUpcomingTasks(db, st);
+      renderLeaderboard(db, st);
+      renderAvatars();
+    }
+
+    function openSubject(subject){
+      if(session.role !== "student"){ notify("Student view only.", "warn"); return; }
+      const db = getDB();
+      const st = db.students[session.studentId];
+      if(!st) return;
+      session.currentSubject = subject;
+      const lessons = studentLessonsForSubject(db, st, subject);
+      document.getElementById('lessons-title').textContent = `${subjectIcon(subject)} ${subject}`;
+      document.getElementById('lessons-count').textContent = lessons.length;
+      document.getElementById('lessons-sub').textContent = `Mga aralin para sa Baitang ${st.gradeLevel} • ${st.section}`;
+      const wrap = document.getElementById('lessons-wrap');
+      wrap.innerHTML = lessons.length ? lessons.map(l => `
+        <div class="lesson-card" onclick="openLesson('${l.gradeLevel}||${l.subject}||${l.lessonId}')">
+          <div class="lesson-icon">${subjectIcon(l.subject)}</div>
+          <div style="flex:1">
+            <div style="font-weight:900">${l.title}</div>
+            <div class="muted">${l.duration} • ${l.lessonId}</div>
+          </div>
+          <div class="lesson-xp">+${l.xp} XP</div>
+        </div>`).join("") : `<div class="card"><div class="muted">Wala pang aralin dito.</div></div>`;
+      go('screen-lessons');
+    }
+
+    function findLessonByKey(db, key){
+      const [g, subject, lessonId] = key.split("||");
+      const grade = parseInt(g, 10);
+      return db.lessons.find(l => l.gradeLevel===grade && l.subject===subject && l.lessonId===lessonId) || null;
+    }
+
+    let ttsUtter = null;
+    let recognizer = null;
+
+    function stopAllAudio(){
+      if(ttsUtter){ try { window.speechSynthesis.cancel(); } catch {} ttsUtter = null; }
+      if(recognizer){ try { recognizer.stop(); } catch {} recognizer = null; }
+    }
+
+    function backFromLesson(){ stopAllAudio(); go('screen-lessons'); }
+
+    function openLesson(key){
+      if(session.role !== "student"){ notify("Student view only.", "warn"); return; }
+      const db = getDB();
+      const st = db.students[session.studentId];
+      if(!st) return;
+      const lesson = findLessonByKey(db, key);
+      if(!lesson){ notify("Lesson not found.", "bad"); return; }
+      session.currentLessonKey = key;
+      logEvent("student", st.id, "lesson_opened", { lessonId: lesson.lessonId, subject: lesson.subject });
+
+      document.getElementById('lesson-title').textContent = `${subjectIcon(lesson.subject)} ${lesson.title}`;
+      document.getElementById('lesson-xp').textContent = lesson.xp;
+      document.getElementById('lesson-instructions').textContent = lesson.instructions || "";
+      document.getElementById('lesson-passage').textContent = lesson.passage || "";
+      document.getElementById('speech-feedback').innerHTML = `<div class="muted">Tip: Gamitin ang “Magsalita” para sa pronunciation feedback.</div>`;
+      renderLessonActivity(lesson);
+      go('screen-lesson');
+    }
+
+    function renderLessonActivity(lesson){
+      const wrap = document.getElementById('lesson-activity');
+      wrap.innerHTML = "";
+      if(lesson.activityItems && lesson.activityItems.length) wrap.appendChild(renderMCQ(lesson));
+      if(lesson.writingTask) wrap.appendChild(renderWriting(lesson));
+      if(lesson.oralTask) wrap.appendChild(renderOral(lesson));
+    }
+
+    function escapeHTML(s){ return String(s || "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+    function renderMCQ(lesson){
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `<div class="section-title">🧠 Pag-unawa</div><div id="mcq-wrap"></div><div id="mcq-feedback"></div>`;
+      const wrap = card.querySelector('#mcq-wrap');
+      const fb = card.querySelector('#mcq-feedback');
+      wrap.innerHTML = lesson.activityItems.map((it, qi) => {
+        const opts = it.options.map((o, oi) =>
+          `<button class="btn btn-outline btn-sm" style="width:100%;justify-content:flex-start;margin:6px 0" onclick="answerMCQ(${qi}, ${oi})">${String.fromCharCode(65+oi)}. ${escapeHTML(o)}</button>`
+        ).join("");
+        return `<div class="card" style="box-shadow:none;background:var(--bg);margin:10px 0"><div style="font-weight:900;margin-bottom:8px">Q${qi+1}. ${escapeHTML(it.q)}</div><div id="mcq-q-${qi}">${opts}</div></div>`;
+      }).join("");
+      fb.innerHTML = `<div class="muted">Sagutin ang mga tanong. Ang score ay itatala sa activity logs.</div>`;
+      return card;
+    }
+
+    function answerMCQ(qi, oi){
+      const db = getDB();
+      const st = db.students[session.studentId];
+      const lesson = findLessonByKey(db, session.currentLessonKey);
+      if(!st || !lesson) return;
+      const it = lesson.activityItems[qi];
+      const correct = (oi === it.correct);
+      const qWrap = document.getElementById(`mcq-q-${qi}`);
+      if(qWrap){
+        qWrap.querySelectorAll('button').forEach((b, idx) => {
+          b.disabled = true;
+          b.classList.remove('btn-outline');
+          if(idx === it.correct) b.classList.add('btn-green');
+          if(idx === oi && !correct) b.classList.add('btn-danger');
+        });
+      }
+      const fb = document.getElementById('mcq-feedback');
+      fb.innerHTML = correct ? `<div class="feedback ok">✅ Tama! Magaling!</div>` : `<div class="feedback bad">❌ Hindi tama. Basahin muli at subukan ulit.</div>`;
+      logEvent("student", st.id, "mcq_answered", { lessonId: lesson.lessonId, qIndex: qi, selected: oi, correct });
+    }
+
+    function renderWriting(lesson){
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="section-title">✍️ Pagsulat</div>
+        <div class="muted">${escapeHTML(lesson.writingTask.prompt || "")}</div>
+        <div class="divider"></div>
+        <textarea class="input-field" id="writing-text" placeholder="Isulat dito ang sagot mo..."></textarea>
+        <div class="divider"></div>
+        <button class="btn btn-blue" onclick="submitWriting()">📩 Ipasa at Kumuha ng AI Feedback</button>
+        <div class="divider"></div>
+        <div id="writing-feedback"></div>`;
+      return card;
+    }
+
+    function simpleWritingFeedback(text){
+      const t = text.trim();
+      const wordCount = t ? t.split(/\s+/).length : 0;
+      const sentenceCount = (t.match(/[.!?]+/g) || []).length || (t ? 1 : 0);
+      const hasPunct = /[,.!?]/.test(t);
+      const hasExampleHints = /(halimbawa|dahil|sapagkat|kaya|upang)/i.test(t);
+      let score = 0;
+      if(wordCount >= 30) score += 30; else score += Math.round((wordCount/30)*30);
+      if(sentenceCount >= 3) score += 25; else score += Math.round((sentenceCount/3)*25);
+      if(hasPunct) score += 15;
+      if(hasExampleHints) score += 15;
+      if(wordCount >= 12) score += 15;
+      score = Math.min(100, score);
+      const tips = [];
+      if(wordCount < 30) tips.push("Dagdagan ang detalye (mas mahabang paliwanag).");
+      if(sentenceCount < 3) tips.push("Gumamit ng mas maraming pangungusap (3+).");
+      if(!hasPunct) tips.push("Gumamit ng bantas (.,!?).");
+      if(!hasExampleHints) tips.push("Magdagdag ng halimbawa o salitang nagpapaliwanag (hal. dahil, halimbawa).");
+      const label = score >= 85 ? "Napakahusay" : score >= 70 ? "Magaling" : score >= 50 ? "Katamtaman" : "Kailangan pa ng practice";
+      return { score, label, tips };
+    }
+
+    function submitWriting(){
+      const db = getDB();
+      const st = db.students[session.studentId];
+      const lesson = findLessonByKey(db, session.currentLessonKey);
+      if(!st || !lesson) return;
+      const text = (document.getElementById('writing-text').value || "").trim();
+      const fbWrap = document.getElementById('writing-feedback');
+      if(!text){ fbWrap.innerHTML = `<div class="feedback bad">❌ Wala pang sagot. Sumulat muna bago ipasa.</div>`; return; }
+      const fb = simpleWritingFeedback(text);
+      st.writingSubmissions[lesson.lessonId] = { at: nowISO(), text, score: fb.score, label: fb.label };
+      st.updatedAt = nowISO(); st.lastActiveAt = nowISO();
+      saveDB(db);
+      logEvent("student", st.id, "writing_submitted", { lessonId: lesson.lessonId, score: fb.score });
+      fbWrap.innerHTML = `
+        <div class="feedback ${fb.score>=70?'ok':fb.score>=50?'warn':'bad'}">
+          <div style="font-family:'Fredoka One',cursive;font-size:18px">🧠 AI Feedback: ${fb.label} (${fb.score}%)</div>
+          <div style="margin-top:8px">
+            ${fb.tips.length ? "<b>Mga Tip:</b><ul style='margin-top:6px;padding-left:18px'>" + fb.tips.map(t=>`<li>${escapeHTML(t)}</li>`).join("") + "</ul>"
+              : "<b>Good job!</b> Kumpleto ang sagot at malinaw ang paliwanag."}
+          </div>
+        </div>`;
+      notify("Writing submitted ✅");
+    }
+
+    function renderOral(lesson){
+      const card = document.createElement('div');
+      card.className = 'card';
+      const prompts = (lesson.oralTask.prompts || []).map(p => `<li style="margin:6px 0;font-weight:900">${escapeHTML(p)}</li>`).join("");
+      card.innerHTML = `<div class="section-title">🎙️ Oral Task</div><div class="muted">Tip: Pindutin ang “Magsalita” sa itaas para ma-record at masukat ang clarity vs target.</div><div class="divider"></div><ul style="padding-left:18px">${prompts}</ul>`;
+      return card;
+    }
+
+    function normalizeText(s){
+      return String(s || "")
+        .toLowerCase()
+        .replace(/[“”"']/g, "")
+        .replace(/[^a-z0-9ñáéíóúü\s]/gi, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function tokenizeWords(s){
+      const t = normalizeText(s);
+      return t ? t.split(" ").filter(Boolean) : [];
+    }
+
+    function levenshteinSeq(a, b){
+      // Works for strings (characters) or arrays (words).
+      const isArrA = Array.isArray(a);
+      const isArrB = Array.isArray(b);
+      const A = isArrA ? a : String(a || "");
+      const B = isArrB ? b : String(b || "");
+      const n = A.length, m = B.length;
+      if(n === 0) return m;
+      if(m === 0) return n;
+
+      const dp = Array.from({length:n+1}, ()=>new Array(m+1).fill(0));
+      for(let i=0;i<=n;i++) dp[i][0]=i;
+      for(let j=0;j<=m;j++) dp[0][j]=j;
+
+      for(let i=1;i<=n;i++){
+        for(let j=1;j<=m;j++){
+          const ai = isArrA ? A[i-1] : A.charAt(i-1);
+          const bj = isArrB ? B[j-1] : B.charAt(j-1);
+          const cost = ai === bj ? 0 : 1;
+          dp[i][j] = Math.min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1]+cost);
+        }
+      }
+      return dp[n][m];
+    }
+
+    function charSimilarityPct(target, spoken){
+      const t = normalizeText(target);
+      const s = normalizeText(spoken);
+      if(!t || !s) return 0;
+      const dist = levenshteinSeq(t, s);
+      const maxLen = Math.max(t.length, s.length) || 1;
+      return Math.max(0, Math.round((1 - dist/maxLen) * 100));
+    }
+
+    function wordSimilarityPct(target, spoken){
+      const tw = tokenizeWords(target);
+      const sw = tokenizeWords(spoken);
+      if(!tw.length || !sw.length) return 0;
+
+      // word-level edit similarity (good when student says the full target)
+      const dist = levenshteinSeq(tw, sw);
+      const maxLen = Math.max(tw.length, sw.length) || 1;
+      return Math.max(0, Math.round((1 - dist/maxLen) * 100));
+    }
+
+    function bestWindowWordSimilarityPct(target, spoken){
+      // Helps when speech recognition returns a partial phrase (common in browsers).
+      const A = tokenizeWords(target);
+      const B = tokenizeWords(spoken);
+      if(!A.length || !B.length) return 0;
+
+      let longer = A, shorter = B;
+      if(B.length > A.length){ longer = B; shorter = A; }
+
+      const shortLen = shorter.length;
+      let best = 0;
+
+      // Try a few window sizes around the shorter length.
+      const sizes = [shortLen-2, shortLen-1, shortLen, shortLen+1, shortLen+2].filter(x => x >= 2);
+      for(const size of sizes){
+        for(let i=0; i<=longer.length - size; i++){
+          const window = longer.slice(i, i+size);
+          const dist = levenshteinSeq(window, shorter);
+          const maxLen = Math.max(window.length, shorter.length) || 1;
+          const pct = Math.max(0, Math.round((1 - dist/maxLen) * 100));
+          if(pct > best) best = pct;
+        }
+      }
+      return best;
+    }
+
+    function similarityPct(target, spoken){
+      // Robust scoring: take the BEST of
+      // 1) character similarity
+      // 2) word-level similarity
+      // 3) best-window word similarity (handles partial transcripts)
+      const c = charSimilarityPct(target, spoken);
+      const w = wordSimilarityPct(target, spoken);
+      const bw = bestWindowWordSimilarityPct(target, spoken);
+      return Math.max(c, w, bw);
+    }
+
+    function bestSimilarityPct(targetVariants, spoken){
+      // Accept multiple targets (ex: with/without student name).
+      const arr = Array.isArray(targetVariants) ? targetVariants : [targetVariants];
+      let best = 0;
+      for(const t of arr){
+        const pct = similarityPct(t, spoken);
+        if(pct > best) best = pct;
+      }
+      return best;
+    }
+
+    function ttsSpeakPassage(){
+      const db = getDB();
+      const lesson = findLessonByKey(db, session.currentLessonKey);
+      if(!lesson) return;
+      stopAllAudio();
+      const text = lesson.passage || "";
+      if(!text){ notify("Walang text sa lesson.", "warn"); return; }
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang="fil-PH"; utter.rate=0.95; utter.pitch=1.0;
+      utter.onend = ()=>{ ttsUtter=null; };
+      ttsUtter = utter;
+      try{ window.speechSynthesis.speak(utter); logEvent("student", session.studentId, "tts_played", { lessonId: lesson.lessonId }); }
+      catch{ notify("TTS not supported on this browser.", "bad"); }
+    }
+
+    function startPronunciation(){
+      const db = getDB();
+      const st = db.students[session.studentId];
+      const lesson = findLessonByKey(db, session.currentLessonKey);
+      if(!st || !lesson) return;
+      stopAllAudio();
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if(!SpeechRecognition){
+        document.getElementById('speech-feedback').innerHTML = `<div class="feedback bad">❌ Speech recognition not supported in this browser.</div>`;
+        return;
+      }
+      recognizer = new SpeechRecognition();
+      recognizer.lang="fil-PH"; recognizer.interimResults=false; recognizer.maxAlternatives=1;
+      const target = (lesson.speechTarget || lesson.passage || "").replace("_____", st.name);
+      const targetVariants = [
+        target,
+        // Allow students to speak without the name/fill-in (common for "_____" prompts)
+        target.replace(st.name, "").replace(/\s+/g, " ").trim(),
+        target.replace("_____", "").replace(/\s+/g, " ").trim(),
+      ].filter(t => t && t.length >= 3);
+
+      document.getElementById('speech-feedback').innerHTML = `<div class="feedback warn"><div style="font-family:'Fredoka One',cursive;font-size:18px">🎤 Listening...</div><div class="muted" style="margin-top:6px">Target: "${escapeHTML(target)}"</div></div>`;
+      recognizer.onresult = (event)=>{
+        const spoken = event.results?.[0]?.[0]?.transcript || "";
+        const pct = bestSimilarityPct(targetVariants, spoken);
+        st.speechAttempts[lesson.lessonId] = st.speechAttempts[lesson.lessonId] || [];
+        st.speechAttempts[lesson.lessonId].push({ at: nowISO(), target, spoken, pct });
+        st.lastActiveAt = nowISO(); st.updatedAt = nowISO();
+        saveDB(db);
+        logEvent("student", st.id, "speech_attempt", { lessonId: lesson.lessonId, pct, spoken });
+        const cls = pct>=80?"ok":pct>=60?"warn":"bad";
+        const msg = pct>=80 ? "Malinaw ang bigkas! 👏" : pct>=60 ? "Okay na, pero puwedeng mas malinaw pa." : "Subukan ulit—bagalan at linawin ang bigkas.";
+        document.getElementById('speech-feedback').innerHTML = `<div class="feedback ${cls}"><div style="font-family:'Fredoka One',cursive;font-size:18px">🗣️ Pronunciation Score: ${pct}%</div><div style="margin-top:6px"><b>Spoken:</b> "${escapeHTML(spoken)}"</div><div class="muted" style="margin-top:6px"><b>Target:</b> "${escapeHTML(target)}"</div><div style="margin-top:10px">${escapeHTML(msg)}</div></div>`;
+        if(pct>=80) awardXP(st.id, 8, "Speech practice (Excellent) +8 XP");
+        else if(pct>=60) awardXP(st.id, 5, "Speech practice +5 XP");
+        else awardXP(st.id, 2, "Speech practice +2 XP");
+        renderStudentDash();
+      };
+      recognizer.onerror = ()=>{ document.getElementById('speech-feedback').innerHTML = `<div class="feedback bad">❌ Speech error. Subukan ulit.</div>`; };
+      recognizer.onend = ()=>{ recognizer=null; };
+      try{ recognizer.start(); } catch { notify("Mic busy or blocked.", "bad"); }
+    }
+
+    const BADGE_DEFS = [
+      { id:"B1", name:"Unang Tagumpay", icon:"🏅", rule:(st)=>Object.keys(st.completedLessons).length>=1, desc:"Natapos ang unang aralin." },
+      { id:"B2", name:"Masipag", icon:"🔥", rule:(st)=>st.xp>=150, desc:"Umabot ng 150 XP (Level 2)." },
+      { id:"B3", name:"Batikang Mambabasa", icon:"📖", rule:(st)=>countCompletedBySubject(st,"Pagbasa")>=2, desc:"Nakumpleto ang 2 Pagbasa lessons." },
+      { id:"B4", name:"Manunulat", icon:"✍️", rule:(st)=>Object.keys(st.writingSubmissions).length>=1, desc:"May naipasa na writing output." },
+      { id:"B5", name:"Tagapagsalita", icon:"🎙️", rule:(st)=>Object.keys(st.speechAttempts).length>=1, desc:"May speech practice attempt." },
+    ];
+
+    function countCompletedBySubject(st, subject){
+      return Object.values(st.completedLessons).filter(x => x.subject === subject).length;
+    }
+
+    function maybeUnlockBadges(st){
+      const unlocked = new Set(st.badges || []);
+      const newly = [];
+      for(const b of BADGE_DEFS){
+        if(unlocked.has(b.id)) continue;
+        if(b.rule(st)){ unlocked.add(b.id); newly.push(b); }
+      }
+      st.badges = Array.from(unlocked);
+      return newly;
+    }
+
+    function awardXP(studentId, amount, reason){
+      const db = getDB();
+      const st = db.students[studentId];
+      if(!st) return;
+      const beforeLevel = levelOfXP(st.xp);
+      st.xp += Math.max(0, Number(amount)||0);
+      st.updatedAt = nowISO(); st.lastActiveAt = nowISO();
+      const newBadges = maybeUnlockBadges(st);
+      saveDB(db);
+      logEvent("student", st.id, "xp_awarded", { amount, reason });
+      if(newBadges.length){
+        newBadges.forEach(b => logEvent("student", st.id, "badge_unlocked", { badgeId:b.id, name:b.name }));
+        notify(`New badge! ${newBadges[0].icon} ${newBadges[0].name}`);
+      }
+      const afterLevel = levelOfXP(st.xp);
+      if(afterLevel > beforeLevel) notify(`Level Up! 🌟 Level ${afterLevel}`);
+    }
+
+    function completeLesson(){
+      const db = getDB();
+      const st = db.students[session.studentId];
+      const lesson = findLessonByKey(db, session.currentLessonKey);
+      if(!st || !lesson) return;
+      const key = `${lesson.gradeLevel}||${lesson.subject}||${lesson.lessonId}`;
+      if(st.completedLessons[key]){ notify("Completed na ito.", "warn"); return; }
+      st.completedLessons[key] = { at: nowISO(), subject: lesson.subject, lessonId: lesson.lessonId, xp: lesson.xp };
+      st.updatedAt = nowISO(); st.lastActiveAt = nowISO();
+      saveDB(db);
+      logEvent("student", st.id, "lesson_completed", { lessonId: lesson.lessonId, subject: lesson.subject, xp: lesson.xp });
+      awardXP(st.id, lesson.xp, `Lesson completed: ${lesson.lessonId}`);
+      notify(`Lesson completed! +${lesson.xp} XP 🎉`);
+      renderStudentDash();
+      go('screen-lessons');
+    }
+
+    function studentGroups(db, st){
+      return Object.values(db.groups).filter(g => g.section === st.section && g.memberIds.includes(st.id));
+    }
+
+    function groupProgress(group){
+      const total = group.tasks.length;
+      if(total === 0) return { done:0, total:0, pct:0 };
+      const memberCount = Math.max(1, group.memberIds.length);
+      const totalStatuses = total * memberCount;
+      let doneStatuses = 0;
+      for(const task of group.tasks){
+        for(const sid of group.memberIds){
+          if(task.statusByStudent?.[sid]) doneStatuses++;
+        }
+      }
+      const pct = Math.round((doneStatuses / totalStatuses) * 100);
+      return { done: doneStatuses, total: totalStatuses, pct };
+    }
+
+    function renderStudentGroups(){
+      const db = getDB();
+      const st = db.students[session.studentId];
+      const wrap = document.getElementById('stu-groups-wrap');
+      if(!st || !wrap) return;
+      const gs = studentGroups(db, st);
+      if(!gs.length){
+        wrap.innerHTML = `<div class="card"><div class="muted">Wala ka pang group. Hintayin ang teacher assignment.</div></div>`;
+        return;
+      }
+      wrap.innerHTML = gs.map(g => {
+        const prog = groupProgress(g);
+        const tasksHtml = g.tasks.length ? g.tasks.map((t) => {
+          const isDone = !!t.statusByStudent?.[st.id];
+          const overdue = t.deadline && (new Date(t.deadline).getTime() < Date.now()) && !isDone;
+          return `
+            <div class="card" style="box-shadow:none;background:var(--bg);margin:10px 0">
+              <div class="row" style="justify-content:space-between">
+                <div style="font-weight:900">${escapeHTML(t.title)}</div>
+                <div class="badge ${isDone?'badge-ok':overdue?'badge-bad':'badge-warn'}">${isDone?'✅ Done':overdue?'⏰ Overdue':'🕒 Pending'}</div>
+              </div>
+              <div class="muted">Deadline: ${t.deadline ? escapeHTML(t.deadline) : "—"} • Reward: +${t.xp} XP</div>
+              <div class="divider"></div>
+              <button class="btn ${isDone?'btn-outline':'btn-green'} btn-sm" ${isDone?'disabled':''} onclick="studentCompleteTask('${g.id}', '${t.id}')">Tapusin Task</button>
+            </div>`;
+        }).join("") : `<div class="muted">Wala pang tasks.</div>`;
+        return `
+          <div class="card">
+            <div class="row" style="justify-content:space-between">
+              <div>
+                <div style="font-family:'Fredoka One',cursive;font-size:20px">👥 ${escapeHTML(g.name)}</div>
+                <div class="muted">Section: ${escapeHTML(g.section)}</div>
+              </div>
+              <div style="min-width:140px">
+                <div class="muted" style="display:flex;justify-content:space-between"><span>Progress</span><span>${prog.pct}%</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:${prog.pct}%"></div></div>
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div class="muted"><b>Members:</b> ${g.memberIds.map(id => escapeHTML(db.students[id]?.name || id)).join(", ")}</div>
+            <div class="divider"></div>
+            <div class="section-title">📋 Tasks</div>
+            ${tasksHtml}
+          </div>`;
+      }).join("");
+    }
+
+    function studentCompleteTask(groupId, taskId){
+      const db = getDB();
+      const st = db.students[session.studentId];
+      const g = db.groups[groupId];
+      if(!st || !g) return;
+      const task = g.tasks.find(x => x.id === taskId);
+      if(!task) return;
+      task.statusByStudent = task.statusByStudent || {};
+      if(task.statusByStudent[st.id]){ notify("Done na ito.", "warn"); return; }
+      task.statusByStudent[st.id] = true;
+      saveDB(db);
+      logEvent("student", st.id, "group_task_completed", { groupId, taskId, title: task.title, xp: task.xp });
+      awardXP(st.id, task.xp || 0, `Group task: ${task.title}`);
+      notify(`Task completed! +${task.xp} XP ✅`);
+      renderStudentGroups();
+      renderStudentDash();
+    }
+
+    function renderBadges(){
+      const db = getDB();
+      const st = db.students[session.studentId];
+      if(!st) return;
+      document.getElementById('badge-xp').textContent = st.xp;
+      const owned = new Set(st.badges || []);
+      const wrap = document.getElementById('badges-wrap');
+      wrap.innerHTML = BADGE_DEFS.map(b => {
+        const got = owned.has(b.id);
+        return `
+          <div class="lesson-card" style="cursor:default;border-color:${got?'var(--green)':'#DDD'};opacity:${got?1:.5}">
+            <div class="lesson-icon">${b.icon}</div>
+            <div style="flex:1">
+              <div style="font-weight:900">${escapeHTML(b.name)} ${got?'✅':'🔒'}</div>
+              <div class="muted">${escapeHTML(b.desc)}</div>
+            </div>
+            <div class="lesson-xp">${got?'Owned':'Locked'}</div>
+          </div>`;
+      }).join("");
+    }
+
+    function averageQuiz(st){
+      const q = st.quizHistory || [];
+      if(!q.length) return 0;
+      const avg = q.reduce((a,b)=>a+(b.pct||0),0)/q.length;
+      return Math.round(avg);
+    }
+
+    function renderProfile(){
+      const db = getDB();
+      const st = db.students[session.studentId];
+      if(!st) return;
+      renderAvatars();
+      const completed = Object.keys(st.completedLessons).length;
+      const quizAvg = averageQuiz(st);
+      const lastActive = st.lastActiveAt ? new Date(st.lastActiveAt).toLocaleString() : "—";
+      document.getElementById('profile-summary').innerHTML = `
+        <div class="row" style="justify-content:space-between">
+          <div class="badge badge-ok">⚡ XP: ${st.xp}</div>
+          <div class="badge badge-warn">🌟 Level: ${levelOfXP(st.xp)}</div>
+          <div class="badge badge-ok">🏅 Badges: ${(st.badges||[]).length}</div>
+        </div>
+        <div class="divider"></div>
+        <div class="muted"><b>Name:</b> ${escapeHTML(st.name)}</div>
+        <div class="muted"><b>Grade/Section:</b> Baitang ${st.gradeLevel} • ${escapeHTML(st.section)}</div>
+        <div class="muted"><b>Completed Lessons:</b> ${completed}</div>
+        <div class="muted"><b>Quiz Average:</b> ${quizAvg}%</div>
+        <div class="muted"><b>Last Active:</b> ${escapeHTML(lastActive)}</div>`;
+    }
+
+    const QUIZ = [
+      {q:"Ano ang dapat gawin kapag nagbabasa ng balita online?", options:["I-share agad","Suriin ang pinagmulan at ebidensiya","Maniwala sa lahat","Huwag magbasa"], correct:1},
+      {q:"Alin ang halimbawa ng pang-uri?", options:["kumain","mabango","puno","bahay"], correct:1},
+      {q:"Ano ang aral ng salawikain: \"Kung ano ang itinanim, siya ring aanihin\"?", options:["Makukuha mo ang bunga ng iyong gawa","Masarap ang ani","Huwag magtanim","Matulog nang maaga"], correct:0},
+      {q:"Alin ang magandang pagbati sa guro?", options:["Hoy!","Uy!","Magandang umaga po!","Ano ba!"], correct:2},
+      {q:"Ano ang mainam sa pagtutulungan?", options:["Nagiging magaan ang gawain","Lumalala ang problema","Walang nangyayari","Nawawala ang oras"], correct:0},
+    ];
+
+    function startQuickQuiz(){
+      if(session.role !== "student"){ notify("Student view only.", "warn"); return; }
+      const db = getDB();
+      const st = db.students[session.studentId];
+      if(!st) return;
+      let score = 0;
+      for(const item of QUIZ){
+        const ans = prompt(item.q + "\n\n" + item.options.map((o,i)=>`${String.fromCharCode(65+i)}. ${o}`).join("\n") + "\n\nType A/B/C/D:");
+        if(!ans) continue;
+        const idx = "ABCD".indexOf(ans.trim().toUpperCase());
+        if(idx === item.correct) score++;
+      }
+      const pct = Math.round((score/QUIZ.length)*100);
+      const xpEarned = score * 10;
+      st.quizHistory = st.quizHistory || [];
+      st.quizHistory.push({ at: nowISO(), score, total: QUIZ.length, pct });
+      st.updatedAt = nowISO();
+      st.lastActiveAt = nowISO();
+      saveDB(db);
+      logEvent("student", st.id, "quiz_completed", { score, total: QUIZ.length, pct, xpEarned });
+      awardXP(st.id, xpEarned, `Quiz completed (${score}/${QUIZ.length})`);
+      notify(`Quiz done: ${score}/${QUIZ.length} (${pct}%) +${xpEarned} XP`);
+      renderStudentDash();
+    }
+
+
+
+
+
+
+function renderTeacherDash(){
+      const db = getDB();
+      const t = db.teachers[session.teacherUsername];
+      document.getElementById('t-name').textContent = t?.name || session.teacherUsername;
+      const students = Object.values(db.students);
+      const groups = Object.values(db.groups);
+      const avgXP = students.length ? Math.round(students.reduce((a,b)=>a+b.xp,0)/students.length) : 0;
+      const totalLogs7d = db.logs.filter(l => (Date.now() - new Date(l.at).getTime()) < 7*24*3600*1000).length;
+      document.getElementById('t-stats').innerHTML = `
+        <div class="card" style="box-shadow:none;background:var(--bg)"><div class="section-title">👨‍🎓 Students</div><div style="font-family:'Fredoka One',cursive;font-size:30px">${students.length}</div><div class="muted">Active accounts</div></div>
+        <div class="card" style="box-shadow:none;background:var(--bg)"><div class="section-title">👥 Groups</div><div style="font-family:'Fredoka One',cursive;font-size:30px">${groups.length}</div><div class="muted">By section</div></div>
+        <div class="card" style="box-shadow:none;background:var(--bg)"><div class="section-title">⚡ Avg XP</div><div style="font-family:'Fredoka One',cursive;font-size:30px">${avgXP}</div><div class="muted">Across students</div></div>
+        <div class="card" style="box-shadow:none;background:var(--bg)"><div class="section-title">🧾 Logs (7d)</div><div style="font-family:'Fredoka One',cursive;font-size:30px">${totalLogs7d}</div><div class="muted">Engagement signals</div></div>`;
+      renderTeacherGroupControls();
+      renderTeacherGroups();
+      renderTeacherStudentsFilters();
+      renderTeacherStudents();
+      renderTeacherLessons();
+    }
+
+    function renderTeacherGroupControls(){
+      const db = getDB();
+      const sel = document.getElementById('t-task-group');
+      const groups = Object.values(db.groups).sort((a,b)=>a.name.localeCompare(b.name));
+      sel.innerHTML = groups.length ? groups.map(g => `<option value="${g.id}">${escapeHTML(g.name)} (${escapeHTML(g.section)})</option>`).join("") : `<option value="">No groups yet</option>`;
+    }
+
+    function teacherCreateGroup(){
+      const db = getDB();
+      const name = (document.getElementById('t-group-name').value || "").trim();
+      const section = (document.getElementById('t-group-section').value || "").trim();
+      if(!name || !section){ notify("Ilagay ang group name at section.", "warn"); return; }
+      const id = "GRP-" + Math.random().toString(16).slice(2);
+      db.groups[id] = { id, name, section, createdBy: session.teacherUsername, memberIds: [], tasks: [], createdAt: nowISO() };
+      saveDB(db);
+      logEvent("teacher", session.teacherUsername, "group_created", { groupId:id, name, section });
+      document.getElementById('t-group-name').value = "";
+      document.getElementById('t-group-section').value = "";
+      notify("Group created ✅");
+      renderTeacherDash();
+    }
+
+    function teacherAddTask(){
+      const db = getDB();
+      const groupId = document.getElementById('t-task-group').value;
+      const title = (document.getElementById('t-task-title').value || "").trim();
+      const deadline = document.getElementById('t-task-deadline').value || "";
+      const xp = Number(document.getElementById('t-task-xp').value || 0);
+      if(!groupId || !db.groups[groupId]){ notify("Pumili ng group.", "warn"); return; }
+      if(!title){ notify("Ilagay ang task title.", "warn"); return; }
+      if(deadline && isNaN(new Date(deadline).getTime())){ notify("Invalid deadline date.", "bad"); return; }
+      if(xp < 0 || xp > 500){ notify("XP must be 0..500.", "warn"); return; }
+      const t = { id:"TSK-"+Math.random().toString(16).slice(2), title, deadline, xp, statusByStudent:{} };
+      db.groups[groupId].tasks.push(t);
+      saveDB(db);
+      logEvent("teacher", session.teacherUsername, "task_added", { groupId, taskId:t.id, title, deadline, xp });
+      document.getElementById('t-task-title').value = "";
+      document.getElementById('t-task-deadline').value = "";
+      document.getElementById('t-task-xp').value = "10";
+      notify("Task added ✅");
+      renderTeacherDash();
+    }
+
+    function renderTeacherGroups(){
+      const db = getDB();
+      const wrap = document.getElementById('t-groups-wrap');
+      const groups = Object.values(db.groups).sort((a,b)=>a.name.localeCompare(b.name));
+      if(!groups.length){ wrap.innerHTML = `<div class="muted">Wala pang groups. Gumawa muna sa “Create Group”.</div>`; return; }
+      wrap.innerHTML = groups.map(g => {
+        const prog = groupProgress(g);
+        const members = g.memberIds.map(id => db.students[id]?.name || id).join(", ") || "—";
+        const studentsInSection = Object.values(db.students).filter(s => s.section === g.section);
+        const memberOptions = studentsInSection.map(s => {
+          const checked = g.memberIds.includes(s.id) ? "checked" : "";
+          return `<label style="display:flex;gap:10px;align-items:center;margin:6px 0;font-weight:900"><input type="checkbox" ${checked} onchange="teacherToggleMember('${g.id}','${s.id}', this.checked)"/><span>${escapeHTML(s.avatar||"👤")} ${escapeHTML(s.name)} (${s.id})</span></label>`;
+        }).join("") || `<div class="muted">Walang students sa section na ito.</div>`;
+        const tasks = g.tasks.map(t => {
+          const completed = Object.values(t.statusByStudent||{}).filter(Boolean).length;
+          const total = Math.max(1, g.memberIds.length);
+          const pct = Math.round((completed/total)*100);
+          return `<div class="card" style="box-shadow:none;background:var(--bg);margin:10px 0"><div class="row" style="justify-content:space-between"><div style="font-weight:900">${escapeHTML(t.title)}</div><div class="badge badge-warn">📌 ${pct}%</div></div><div class="muted">Deadline: ${t.deadline || "—"} • XP: +${t.xp} • Done: ${completed}/${total}</div><div class="divider"></div><button class="btn btn-danger btn-sm" onclick="teacherDeleteTask('${g.id}','${t.id}')">Delete Task</button></div>`;
+        }).join("") || `<div class="muted">Wala pang tasks.</div>`;
+        return `
+          <div class="card" style="margin:10px 0">
+            <div class="row" style="justify-content:space-between">
+              <div>
+                <div style="font-family:'Fredoka One',cursive;font-size:20px">👥 ${escapeHTML(g.name)}</div>
+                <div class="muted">Section: ${escapeHTML(g.section)}</div>
+                <div class="muted"><b>Members:</b> ${escapeHTML(members)}</div>
+              </div>
+              <div style="min-width:160px">
+                <div class="muted" style="display:flex;justify-content:space-between"><span>Group Progress</span><span>${prog.pct}%</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:${prog.pct}%"></div></div>
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div class="grid grid-2">
+              <div class="card" style="box-shadow:none;background:#fff">
+                <div class="section-title">👨‍🎓 Members</div>
+                <div class="muted">Tick students to include in this group.</div>
+                <div class="divider"></div>
+                <div style="max-height:260px;overflow:auto;padding-right:6px">${memberOptions}</div>
+              </div>
+              <div class="card" style="box-shadow:none;background:#fff">
+                <div class="section-title">📋 Tasks</div>
+                ${tasks}
+              </div>
+            </div>
+            <div class="divider"></div>
+            <button class="btn btn-danger btn-sm" onclick="teacherDeleteGroup('${g.id}')">Delete Group</button>
+          </div>`;
+      }).join("");
+      renderTeacherGroupControls();
+      renderStudentGroups();
+    }
+
+    function teacherToggleMember(groupId, studentId, checked){
+      const db = getDB();
+      const g = db.groups[groupId];
+      if(!g) return;
+      const set = new Set(g.memberIds);
+      if(checked) set.add(studentId); else set.delete(studentId);
+      g.memberIds = Array.from(set);
+      saveDB(db);
+      logEvent("teacher", session.teacherUsername, "group_member_updated", { groupId, studentId, checked });
+      renderTeacherGroups();
+    }
+
+    function teacherDeleteGroup(groupId){
+      const db = getDB();
+      if(!db.groups[groupId]) return;
+      if(!confirm("Delete this group?")) return;
+      delete db.groups[groupId];
+      saveDB(db);
+      logEvent("teacher", session.teacherUsername, "group_deleted", { groupId });
+      notify("Group deleted ✅");
+      renderTeacherDash();
+    }
+
+    function teacherDeleteTask(groupId, taskId){
+      const db = getDB();
+      const g = db.groups[groupId];
+      if(!g) return;
+      if(!confirm("Delete this task?")) return;
+      g.tasks = g.tasks.filter(t => t.id !== taskId);
+      saveDB(db);
+      logEvent("teacher", session.teacherUsername, "task_deleted", { groupId, taskId });
+      notify("Task deleted ✅");
+      renderTeacherDash();
+    }
+
+    
+    function teacherCreateLesson(){
+      const db = getDB();
+      const gradeLevel = Number(document.getElementById('t-lesson-grade').value || 0);
+      const subject = (document.getElementById('t-lesson-subject').value || "").trim();
+      const title = (document.getElementById('t-lesson-title').value || "").trim();
+      const xp = Number(document.getElementById('t-lesson-xp').value || 0);
+      const instructions = (document.getElementById('t-lesson-instructions').value || "").trim();
+      const passage = (document.getElementById('t-lesson-passage').value || "").trim();
+      const speechTarget = (document.getElementById('t-lesson-speechTarget').value || "").trim();
+
+      if(!(gradeLevel>=1 && gradeLevel<=6)){ notify("Invalid grade level.", "bad"); return; }
+      if(!subject){ notify("Select a subject.", "warn"); return; }
+      if(!title){ notify("Lesson title is required.", "warn"); return; }
+      if(!passage){ notify("Passage/content is required.", "warn"); return; }
+      if(xp < 0 || xp > 500){ notify("XP must be 0..500.", "warn"); return; }
+
+      // Optional MCQ (only if filled)
+      const q = (document.getElementById('t-mcq-q').value || "").trim();
+      const a = (document.getElementById('t-mcq-a').value || "").trim();
+      const b = (document.getElementById('t-mcq-b').value || "").trim();
+      const c = (document.getElementById('t-mcq-c').value || "").trim();
+      const d = (document.getElementById('t-mcq-d').value || "").trim();
+      const correct = Number(document.getElementById('t-mcq-correct').value || 0);
+
+      let activityItems = null;
+      if(q && a && b && c && d){
+        activityItems = [{ q, options:[a,b,c,d], correct }];
+      }
+
+      // Optional writing prompt
+      const writingPrompt = (document.getElementById('t-writing-prompt').value || "").trim();
+      const writingTask = writingPrompt ? { prompt: writingPrompt } : null;
+
+      // Create a unique lessonId
+      const lid = "TCH-" + Math.random().toString(16).slice(2,8).toUpperCase();
+      const lessonId = `G${gradeLevel}-${subject.substring(0,3).toUpperCase()}-${lid}`;
+
+      db.lessons.push({
+        gradeLevel,
+        subject,
+        lessonId,
+        title,
+        duration: "10–20 minuto",
+        xp: xp || 25,
+        passage,
+        instructions: instructions || "Basahin at sundin ang panuto.",
+        activityItems,
+        writingTask,
+        oralTask: null,
+        speechTarget: speechTarget || null,
+        createdBy: session.teacherUsername,
+        createdAt: nowISO()
+      });
+
+      saveDB(db);
+      logEvent("teacher", session.teacherUsername, "lesson_created", { gradeLevel, subject, lessonId, title });
+
+      // Clear fields
+      document.getElementById('t-lesson-title').value = "";
+      document.getElementById('t-lesson-instructions').value = "";
+      document.getElementById('t-lesson-passage').value = "";
+      document.getElementById('t-lesson-speechTarget').value = "";
+      document.getElementById('t-mcq-q').value = "";
+      document.getElementById('t-mcq-a').value = "";
+      document.getElementById('t-mcq-b').value = "";
+      document.getElementById('t-mcq-c').value = "";
+      document.getElementById('t-mcq-d').value = "";
+      document.getElementById('t-writing-prompt').value = "";
+
+      notify("Lesson created ✅");
+      renderTeacherLessons();
+    }
+
+    function renderTeacherLessons(){
+      const db = getDB();
+      const wrap = document.getElementById('t-lessons-wrap');
+      if(!wrap) return;
+      const lessons = db.lessons
+        .filter(l => l.createdBy === session.teacherUsername)
+        .slice()
+        .sort((a,b)=>String(b.createdAt||"").localeCompare(String(a.createdAt||"")))
+        .slice(0, 10);
+
+      if(!lessons.length){
+        wrap.innerHTML = "No teacher-created lessons yet.";
+        return;
+      }
+
+      wrap.innerHTML = lessons.map(l => `
+        <div class="lesson-card" style="cursor:default;border-color:var(--blue)">
+          <div class="lesson-icon">${subjectIcon(l.subject)}</div>
+          <div style="flex:1">
+            <div style="font-weight:900">${escapeHTML(l.title)}</div>
+            <div class="muted">Grade ${l.gradeLevel} • ${escapeHTML(l.subject)} • ${escapeHTML(l.lessonId)} • XP ${l.xp}</div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="openTeacherEditModal('${escapeHTML(l.lessonId)}')">View / Edit</button>
+        </div>
+      `).join("");
+    }
+
+    function openTeacherEditModal(lessonId){
+      const db = getDB();
+      const lesson = db.lessons.find(l => l.lessonId === lessonId);
+      if(!lesson){ notify("Lesson not found.", "bad"); return; }
+      if(lesson.createdBy !== session.teacherUsername){
+        notify("Edit allowed for teacher-created lessons only.", "warn");
+        return;
+      }
+
+      document.getElementById('t-edit-lessonId').value = lesson.lessonId;
+      document.getElementById('t-edit-title').value = lesson.title || "";
+      document.getElementById('t-edit-xp').value = lesson.xp ?? 25;
+      document.getElementById('t-edit-instructions').value = lesson.instructions || "";
+      document.getElementById('t-edit-passage').value = lesson.passage || "";
+      document.getElementById('t-edit-speechTarget').value = lesson.speechTarget || "";
+
+      const mcq = (lesson.activityItems && lesson.activityItems.length) ? lesson.activityItems[0] : null;
+      document.getElementById('t-edit-mcq-q').value = mcq?.q || "";
+      document.getElementById('t-edit-mcq-a').value = mcq?.options?.[0] || "";
+      document.getElementById('t-edit-mcq-b').value = mcq?.options?.[1] || "";
+      document.getElementById('t-edit-mcq-c').value = mcq?.options?.[2] || "";
+      document.getElementById('t-edit-mcq-d').value = mcq?.options?.[3] || "";
+      document.getElementById('t-edit-mcq-correct').value = String(mcq?.correct ?? 0);
+
+      document.getElementById('t-edit-writing-prompt').value = lesson.writingTask?.prompt || "";
+
+      document.getElementById('t-lesson-edit-modal').style.display = "flex";
+    }
+
+    function closeTeacherEditModal(){
+      document.getElementById('t-lesson-edit-modal').style.display = "none";
+    }
+
+    function teacherSaveLessonEdits(){
+      const db = getDB();
+      const lessonId = document.getElementById('t-edit-lessonId').value;
+      const lesson = db.lessons.find(l => l.lessonId === lessonId);
+      if(!lesson){ notify("Lesson not found.", "bad"); return; }
+      if(lesson.createdBy !== session.teacherUsername){
+        notify("Edit allowed for teacher-created lessons only.", "warn");
+        return;
+      }
+
+      const title = (document.getElementById('t-edit-title').value || "").trim();
+      const xp = Number(document.getElementById('t-edit-xp').value || 0);
+      const instructions = (document.getElementById('t-edit-instructions').value || "").trim();
+      const passage = (document.getElementById('t-edit-passage').value || "").trim();
+      const speechTarget = (document.getElementById('t-edit-speechTarget').value || "").trim();
+
+      if(!title){ notify("Title is required.", "warn"); return; }
+      if(!passage){ notify("Passage/content is required.", "warn"); return; }
+      if(xp < 0 || xp > 500){ notify("XP must be 0..500.", "warn"); return; }
+
+      const q = (document.getElementById('t-edit-mcq-q').value || "").trim();
+      const a = (document.getElementById('t-edit-mcq-a').value || "").trim();
+      const b = (document.getElementById('t-edit-mcq-b').value || "").trim();
+      const c = (document.getElementById('t-edit-mcq-c').value || "").trim();
+      const d = (document.getElementById('t-edit-mcq-d').value || "").trim();
+      const correct = Number(document.getElementById('t-edit-mcq-correct').value || 0);
+
+      let activityItems = null;
+      if(q && a && b && c && d){
+        activityItems = [{ q, options:[a,b,c,d], correct }];
+      }
+
+      const writingPrompt = (document.getElementById('t-edit-writing-prompt').value || "").trim();
+      const writingTask = writingPrompt ? { prompt: writingPrompt } : null;
+
+      lesson.title = title;
+      lesson.xp = xp;
+      lesson.instructions = instructions || "Basahin at sundin ang panuto.";
+      lesson.passage = passage;
+      lesson.speechTarget = speechTarget || null;
+      lesson.activityItems = activityItems;
+      lesson.writingTask = writingTask;
+      lesson.updatedAt = nowISO();
+
+      saveDB(db);
+      logEvent("teacher", session.teacherUsername, "lesson_edited", { lessonId, title });
+      notify("Lesson updated ✅");
+      closeTeacherEditModal();
+      renderTeacherLessons();
+    }
+
+
+function renderTeacherStudentsFilters(){
+      const db = getDB();
+      const sel = document.getElementById('t-filter-section');
+      const sections = Array.from(new Set(Object.values(db.students).map(s => s.section))).sort();
+      sel.innerHTML = `<option value="ALL">All Sections</option>` + sections.map(s => `<option value="${escapeHTML(s)}">${escapeHTML(s)}</option>`).join("");
+    }
+
+    
+function renderTeacherStudents(){
+      const db = getDB();
+      const filter = document.getElementById('t-filter-section').value || "ALL";
+      const rows = Object.values(db.students)
+        .filter(s => filter==="ALL" ? true : s.section === filter)
+        .sort((a,b)=>b.xp-a.xp);
+
+      const wrap = document.getElementById('t-students-table');
+      wrap.innerHTML = rows.map(s => {
+        const lessons = Object.keys(s.completedLessons||{}).length;
+        const qavg = averageQuiz(s);
+        const last = s.lastActiveAt ? new Date(s.lastActiveAt).toLocaleString() : "—";
+        return `
+          <div class="trow" style="cursor:pointer" onclick="openTeacherStudentDetail('${s.id}')">
+            <div>
+              ${escapeHTML(s.avatar||"👤")} ${escapeHTML(s.name)}
+              <div class="muted">${s.id} • Baitang ${s.gradeLevel} • ${escapeHTML(s.section)}</div>
+              <div style="margin-top:6px">
+                <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); openTeacherStudentDetail('${s.id}')">View details</button>
+              </div>
+            </div>
+            <div>${s.xp}</div>
+            <div>${lessons}</div>
+            <div class="hide-sm">${qavg}%</div>
+            <div class="hide-sm">${escapeHTML(last)}</div>
+          </div>`;
+      }).join("") || `<div class="trow"><div class="muted">No students.</div><div></div><div></div><div class="hide-sm"></div><div class="hide-sm"></div></div>`;
+    }
+
+
+    function exportStudentsCSV(){
+      const db = getDB();
+      const rows = Object.values(db.students).map(s => ({
+        id: s.id, name: s.name, gradeLevel: s.gradeLevel, section: s.section,
+        xp: s.xp, level: levelOfXP(s.xp),
+        completedLessons: Object.keys(s.completedLessons||{}).length,
+        quizAvg: averageQuiz(s), badges: (s.badges||[]).length,
+        lastActiveAt: s.lastActiveAt || ""
+      }));
+      downloadCSV("students-report.csv", rows);
+      logEvent("teacher", session.teacherUsername, "export_students_csv", { count: rows.length });
+      notify("Students CSV exported ✅");
+    }
+
+    function exportLogsCSV(){
+      const db = getDB();
+      const rows = db.logs.map(l => ({ at: l.at, actorRole: l.actorRole, actorId: l.actorId, type: l.type, meta: JSON.stringify(l.meta||{}) }));
+      downloadCSV("activity-logs.csv", rows);
+      logEvent("teacher", session.teacherUsername, "export_logs_csv", { count: rows.length });
+      notify("Logs CSV exported ✅");
+    }
+
+
+    function downloadSummaryReport(){
+      const db = getDB();
+      const teacher = db.teachers[session.teacherUsername];
+      const createdAt = new Date().toLocaleString();
+      const students = Object.values(db.students);
+      const sections = Array.from(new Set(students.map(s => s.section))).sort();
+
+      const sectionBlocks = sections.map(sec => {
+        const group = students.filter(s => s.section === sec);
+        const avgXP = group.length ? Math.round(group.reduce((a,b)=>a+b.xp,0)/group.length) : 0;
+        const avgQuiz = group.length ? Math.round(group.reduce((a,b)=>a+averageQuiz(b),0)/group.length) : 0;
+        const top = group.slice().sort((a,b)=>b.xp-a.xp).slice(0,5);
+        return `
+          <h3 style="margin:18px 0 6px">Section: ${escapeHTML(sec)}</h3>
+          <p><b>Students:</b> ${group.length} • <b>Avg XP:</b> ${avgXP} • <b>Avg Quiz:</b> ${avgQuiz}%</p>
+          <table style="width:100%;border-collapse:collapse;margin:10px 0">
+            <tr style="background:#f6f6f6">
+              <th style="text-align:left;padding:8px;border:1px solid #ddd">Top Students</th>
+              <th style="text-align:left;padding:8px;border:1px solid #ddd">XP</th>
+              <th style="text-align:left;padding:8px;border:1px solid #ddd">Completed Lessons</th>
+            </tr>
+            ${top.map(s => `
+              <tr>
+                <td style="padding:8px;border:1px solid #ddd">${escapeHTML(s.name)} (${s.id})</td>
+                <td style="padding:8px;border:1px solid #ddd">${s.xp}</td>
+                <td style="padding:8px;border:1px solid #ddd">${Object.keys(s.completedLessons||{}).length}</td>
+              </tr>
+            `).join("")}
+          </table>
+        `;
+      }).join("");
+
+      const html = `
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Tuklas Talino – Teacher Summary Report</title>
+  <style>
+    body{font-family:Arial, sans-serif; padding:24px; color:#222;}
+    h1{margin:0 0 6px;}
+    .muted{color:#666; font-size:12px;}
+  
+    body:not([data-role="student"]) .bottom-nav{display:none !important;}
+  </style>
+</head>
+<body>
+  <h1>Tuklas Talino – Summary Report</h1>
+  <div class="muted">Generated: ${escapeHTML(createdAt)} • Teacher: ${escapeHTML(teacher?.name || session.teacherUsername || "—")}</div>
+  <hr style="margin:16px 0"/>
+  <h2>Overall</h2>
+  <p><b>Total Students:</b> ${students.length}</p>
+  ${sectionBlocks || "<p>No data.</p>"}
+  <hr style="margin:16px 0"/>
+  <div class="muted">Note: This report summarizes engagement signals (XP, completions, quiz averages) for monitoring purposes.</div>
+</body>
+</html>`;
+      const blob = new Blob([html], {type:"text/html;charset=utf-8"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "tuklas-talino-summary-report.html";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+
+      logEvent("teacher", session.teacherUsername, "export_summary_report", { sections: sections.length, students: students.length });
+      notify("Summary report downloaded ✅");
+    }
+    function downloadCSV(filename, rows){
+      if(!rows.length){ notify("No data to export.", "warn"); return; }
+      const cols = Object.keys(rows[0]);
+      const csv = [cols.join(","), ...rows.map(r => cols.map(c => csvCell(r[c])).join(","))].join("\n");
+      const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function csvCell(v){
+      const s = String(v ?? "");
+      if(/[,"\n]/.test(s)) return `"${s.replace(/"/g,'""')}"`;
+      return s;
+    }
+
+    function renderAdminDash(){ renderAdminStudents(); renderAdminTeachers(); renderAdminHistory(); }
+
+    function adminAddStudent(){
+      const db = getDB();
+      const id = (document.getElementById('a-stu-id').value || "").trim();
+      const name = (document.getElementById('a-stu-name').value || "").trim();
+      const grade = Number(document.getElementById('a-stu-grade').value || 0);
+      const section = (document.getElementById('a-stu-section').value || "").trim();
+      if(!id || !name || !section || !(grade>=1 && grade<=6)){ notify("Complete fields: ID, name, grade(1-6), section.", "warn"); return; }
+      if(db.students[id]){ notify("Student ID already exists.", "bad"); return; }
+      db.students[id] = { id, name, gradeLevel: grade, section, avatar:"🦊", xp:0, badges:[], completedLessons:{}, quizHistory:[], writingSubmissions:{}, speechAttempts:{}, createdAt: nowISO(), updatedAt: nowISO(), lastActiveAt:null };
+      saveDB(db);
+      logEvent("admin", session.adminUsername, "student_created", { id, name, gradeLevel: grade, section });
+      document.getElementById('a-stu-id').value = "";
+      document.getElementById('a-stu-name').value = "";
+      document.getElementById('a-stu-grade').value = "";
+      document.getElementById('a-stu-section').value = "";
+      notify("Student added ✅");
+      renderAdminDash();
+    }
+
+    function adminAddTeacher(){
+      const db = getDB();
+      const u = (document.getElementById('a-t-username').value || "").trim();
+      const name = (document.getElementById('a-t-name').value || "").trim();
+      const p = (document.getElementById('a-t-password').value || "").trim();
+      if(!u || !name || !p){ notify("Complete teacher fields.", "warn"); return; }
+      if(db.teachers[u]){ notify("Teacher username exists.", "bad"); return; }
+      if(p.length < 4){ notify("Password too short.", "warn"); return; }
+      db.teachers[u] = { username:u, name, password:p, active:true, createdAt:nowISO() };
+      saveDB(db);
+      logEvent("admin", session.adminUsername, "teacher_created", { username:u, name });
+      document.getElementById('a-t-username').value = "";
+      document.getElementById('a-t-name').value = "";
+      document.getElementById('a-t-password').value = "";
+      notify("Teacher added ✅");
+      renderAdminDash();
+    }
+
+function renderAdminStudents(){
+      const db = getDB();
+      const filter = (document.getElementById('a-stu-filter')?.value || 'ACTIVE');
+      const wrap = document.getElementById('admin-students-wrap');
+      let rows = Object.values(db.students).sort((a,b)=>a.id.localeCompare(b.id));
+      rows = rows.filter(s => {
+        const archived = !!s.archived;
+        if(filter==='ALL') return true;
+        if(filter==='ARCHIVED') return archived;
+        return !archived;
+      });
+
+      wrap.innerHTML = rows.map(s => `
+        <div class="lesson-card" style="cursor:default">
+          <div class="lesson-icon">${s.avatar || "👤"}</div>
+          <div style="flex:1">
+            <div style="font-weight:900">${escapeHTML(s.name)} (${s.id})</div>
+            <div class="muted">Baitang ${s.gradeLevel} • ${escapeHTML(s.section)} • XP ${s.xp} • Status: ${s.archived? "Archived":"Active"}</div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="adminResetStudent('${s.id}')">Reset Progress</button>
+          ${s.archived
+            ? `<button class="btn btn-green btn-sm" onclick="adminReactivateStudent('${s.id}')">Reactivate</button>`
+            : `<button class="btn btn-yellow btn-sm" onclick="adminArchiveStudent('${s.id}')">Archive</button>`
+          }
+        </div>`).join("") || `<div class="muted">No students.</div>`;
+    }
+
+function renderAdminTeachers(){
+      const db = getDB();
+      const filter = (document.getElementById('a-t-filter')?.value || 'ACTIVE');
+      const wrap = document.getElementById('admin-teachers-wrap');
+
+      let rows = Object.values(db.teachers).sort((a,b)=>a.username.localeCompare(b.username));
+      rows = rows.filter(t => {
+        const isArchived = !!t.archived || !!t.inactive;
+        if(filter==='ALL') return true;
+        if(filter==='ARCHIVED' || filter==='INACTIVE') return isArchived;
+        return !isArchived;
+      });
+
+      wrap.innerHTML = rows.map(t => {
+        const isArchived = !!t.archived || !!t.inactive;
+        const status = isArchived ? "Archived" : "Active";
+
+        let actionBtn = "";
+        if(t.username === "teacher1"){
+          actionBtn = `<button class="btn btn-outline btn-sm" disabled title="Protected demo account">Protected</button>`;
+        } else if(isArchived){
+          actionBtn = `<button class="btn btn-green btn-sm" onclick="adminReactivateTeacher('${escapeHTML(t.username)}')">Reactivate</button>`;
+        } else {
+          actionBtn = `<button class="btn btn-yellow btn-sm" onclick="adminArchiveTeacher('${escapeHTML(t.username)}')">Archive</button>`;
+        }
+
+        return `
+          <div class="lesson-card" style="cursor:default;border-color:var(--blue)">
+            <div class="lesson-icon">👩‍🏫</div>
+            <div style="flex:1">
+              <div style="font-weight:900">${escapeHTML(t.name)} (${escapeHTML(t.username)})</div>
+              <div class="muted">Created: ${escapeHTML(t.createdAt)} • Status: ${status}</div>
+            </div>
+            ${actionBtn}
+          </div>`;
+      }).join("") || `<div class="muted">No teachers.</div>`;
+    }
+
+
+    function adminResetStudent(studentId){
+      const db = getDB();
+      const s = db.students[studentId];
+      if(!s) return;
+      if(!confirm("Reset this student's progress (XP, badges, completed lessons, submissions)?")) return;
+      s.xp=0; s.badges=[]; s.completedLessons={}; s.quizHistory=[]; s.writingSubmissions={}; s.speechAttempts={};
+      s.updatedAt = nowISO();
+      saveDB(db);
+      logEvent("admin", session.adminUsername, "student_progress_reset", { studentId });
+      notify("Student reset ✅");
+      renderAdminDash();
+      renderAdminHistory();
+    }
+
+
+    function adminArchiveStudent(studentId){
+      const db=getDB();
+      const s=db.students[studentId];
+      if(!s) return;
+      if(!confirm('Archive this student account? (Login will be disabled)')) return;
+      s.archived=true;
+      s.updatedAt=nowISO();
+      saveDB(db);
+      logEvent('admin', session.adminUsername, 'student_archived', { studentId });
+      notify('Student archived ✅');
+      renderAdminStudents();
+      renderAdminHistory();
+    }
+
+    function adminReactivateStudent(studentId){
+      const db=getDB();
+      const s=db.students[studentId];
+      if(!s) return;
+      if(!confirm('Reactivate this student account?')) return;
+      s.archived=false;
+      s.updatedAt=nowISO();
+      saveDB(db);
+      logEvent('admin', session.adminUsername, 'student_reactivated', { studentId });
+      notify('Student reactivated ✅');
+      renderAdminStudents();
+      renderAdminHistory();
+    }
+
+
+function adminSetStudentStatus(studentId, status){
+      const db = getDB();
+      const s = db.students[studentId];
+      if(!s) return;
+
+      const next = status === "active" ? "active" : "archived";
+      const label = next === "active" ? "reactivate" : "archive";
+      if(!confirm(`Confirm to ${label} this student account? (Records will be preserved.)`)) return;
+
+      s.status = next;
+      s.updatedAt = nowISO();
+      saveDB(db);
+
+      logEvent("admin", session.adminUsername, "student_status_updated", { studentId, status: next });
+      notify(`Student status updated: ${next} ✅`);
+      renderAdminDash();
+    }
+
+    function adminSetTeacherStatus(username, active){
+      const db = getDB();
+      const t = db.teachers[username];
+      if(!t) return;
+      if(username === "teacher1"){
+        notify("Demo teacher1 is protected in this demo.", "warn");
+        return;
+      }
+
+      const action = active ? "reactivate" : "deactivate";
+      if(!confirm(`Confirm to ${action} this teacher account? (Records will be preserved.)`)) return;
+
+      t.active = !!active;
+      t.updatedAt = nowISO();
+      saveDB(db);
+
+      logEvent("admin", session.adminUsername, "teacher_status_updated", { username, active: !!active });
+      notify(`Teacher status updated ✅`);
+      renderAdminDash();
+    }
+
+    
+    
+    
+    /***********************
+     * Teacher: Student detail (monitoring)
+     * Rationale: Chapters 1–3 require teacher monitoring with summarized reports.
+     ***********************/
+    function openTeacherStudentDetail(studentId){
+      if(session.role !== "teacher"){
+        notify("Teacher-only feature.", "warn");
+        return;
+      }
+      const db = getDB();
+      const s = db.students[studentId];
+      if(!s){
+        notify("Student not found.", "bad");
+        return;
+      }
+
+      const modal = document.getElementById('t-student-modal');
+      modal.classList.add('active');
+
+      document.getElementById('t-student-modal-title').textContent =
+        `${s.avatar || "👤"} ${s.name} (${s.id})`;
+
+      document.getElementById('t-student-modal-sub').textContent =
+        `Baitang ${s.gradeLevel} • ${escapeHTML(s.section)} • XP ${s.xp} • Last Active: ${s.lastActiveAt ? new Date(s.lastActiveAt).toLocaleString() : "—"}`;
+
+      renderTeacherStudentDetailBody(db, s);
+      logEvent("teacher", session.teacherUsername, "student_detail_viewed", { studentId });
+    }
+
+    function closeTeacherStudentDetail(){
+      document.getElementById('t-student-modal')?.classList.remove('active');
+    }
+
+    function renderTeacherStudentDetailBody(db, s){
+      const body = document.getElementById('t-student-modal-body');
+
+      const completedCount = Object.keys(s.completedLessons || {}).length;
+      const quizAvg = averageQuiz(s);
+      const writingCount = Object.keys(s.writingSubmissions || {}).length;
+      const speechLessonCount = Object.keys(s.speechAttempts || {}).length;
+
+      const completedBySubject = ["Pagbasa","Bokabularyo","Panitikan","Oral Comm","Pagsulat"].map(subj => {
+        const total = db.lessons.filter(l => l.gradeLevel === s.gradeLevel && l.subject === subj).length;
+        const done = Object.values(s.completedLessons || {}).filter(x => x.subject === subj).length;
+        const pct = total ? Math.round((done/total)*100) : 0;
+        return { subj, done, total, pct };
+      });
+
+      const completedRecent = Object.values(s.completedLessons || {})
+        .sort((a,b)=>String(b.at||"").localeCompare(String(a.at||"")))
+        .slice(0, 12)
+        .map(x => `<li style="margin:6px 0"><b>${escapeHTML(x.subject)}</b> • ${escapeHTML(x.lessonId)} • ${escapeHTML(x.at)}</li>`)
+        .join("") || `<div class="muted">No completed lessons yet.</div>`;
+
+      const writingList = Object.entries(s.writingSubmissions || {})
+        .sort((a,b)=>String(b[1]?.at||"").localeCompare(String(a[1]?.at||"")))
+        .slice(0, 8)
+        .map(([lessonId, sub]) => `
+          <div class="card" style="box-shadow:none;background:var(--bg);margin:10px 0">
+            <div class="row" style="justify-content:space-between">
+              <div style="font-weight:900">Lesson: ${escapeHTML(lessonId)}</div>
+              <div class="badge ${sub.score>=70?'badge-ok':sub.score>=50?'badge-warn':'badge-bad'}">${sub.score}%</div>
+            </div>
+            <div class="muted">Submitted: ${escapeHTML(sub.at || "—")} • Label: ${escapeHTML(sub.label || "—")}</div>
+          </div>
+        `).join("") || `<div class="muted">No writing submissions yet.</div>`;
+
+      const speechList = Object.entries(s.speechAttempts || {})
+        .map(([lessonId, arr]) => {
+          const best = (arr || []).reduce((m, it) => Math.max(m, Number(it.pct||0)), 0);
+          const last = (arr || []).slice(-1)[0];
+          return { lessonId, best, lastAt: last?.at || "", lastPct: Number(last?.pct||0) };
+        })
+        .sort((a,b)=>String(b.lastAt).localeCompare(String(a.lastAt)))
+        .slice(0, 8)
+        .map(x => `
+          <div class="card" style="box-shadow:none;background:var(--bg);margin:10px 0">
+            <div class="row" style="justify-content:space-between">
+              <div style="font-weight:900">Lesson: ${escapeHTML(x.lessonId)}</div>
+              <div class="badge ${x.best>=80?'badge-ok':x.best>=60?'badge-warn':'badge-bad'}">Best: ${x.best}%</div>
+            </div>
+            <div class="muted">Last attempt: ${escapeHTML(x.lastAt || "—")} • Last score: ${x.lastPct}%</div>
+          </div>
+        `).join("") || `<div class="muted">No speech attempts yet.</div>`;
+
+      const groupBlocks = getStudentGroupStatusForTeacher(db, s);
+
+      const recentLogs = (db.logs || [])
+        .filter(l => l.actorRole === "student" && l.actorId === s.id)
+        .slice(0, 12)
+        .map(l => `
+          <div class="card" style="box-shadow:none;background:var(--bg);margin:8px 0">
+            <div style="font-weight:900">${escapeHTML(l.type)}</div>
+            <div class="muted">${escapeHTML(l.at)}</div>
+            <div class="muted">Meta: ${escapeHTML(JSON.stringify(l.meta || {}))}</div>
+          </div>
+        `).join("") || `<div class="muted">No recent logs.</div>`;
+
+      const progCards = completedBySubject.map(x => `
+        <div class="card" style="box-shadow:none;background:#fff">
+          <div style="font-weight:900">${subjectIcon(x.subj)} ${escapeHTML(x.subj)}</div>
+          <div class="muted">${x.done}/${x.total} completed • ${x.pct}%</div>
+          <div class="progress-bar" style="margin-top:8px"><div class="progress-fill" style="width:${x.pct}%"></div></div>
+        </div>
+      `).join("");
+
+      body.innerHTML = `
+        <div class="grid grid-3">
+          <div class="card" style="box-shadow:none;background:var(--bg)">
+            <div class="section-title">📌 Summary</div>
+            <div class="muted"><b>Completed lessons:</b> ${completedCount}</div>
+            <div class="muted"><b>Quiz average:</b> ${quizAvg}%</div>
+            <div class="muted"><b>Writing submissions:</b> ${writingCount}</div>
+            <div class="muted"><b>Speech lessons attempted:</b> ${speechLessonCount}</div>
+          </div>
+          <div class="card" style="box-shadow:none;background:var(--bg)">
+            <div class="section-title">⚡ XP</div>
+            <div style="font-family:'Fredoka One',cursive;font-size:30px">${s.xp}</div>
+            <div class="muted">Level ${levelOfXP(s.xp)} • Progress ${xpPct(s.xp)}%</div>
+          </div>
+          <div class="card" style="box-shadow:none;background:var(--bg)">
+            <div class="section-title">🏅 Badges</div>
+            <div class="muted">${(s.badges||[]).length} unlocked</div>
+            <div class="muted" style="margin-top:6px">${(s.badges||[]).length ? escapeHTML((s.badges||[]).join(", ")) : "—"}</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="section-title">📊 Progress per Module</div>
+        <div class="grid grid-3">${progCards}</div>
+
+        <div class="divider"></div>
+        <div class="section-title">👥 Group Participation</div>
+        ${groupBlocks}
+
+        <div class="divider"></div>
+        <div class="section-title">✅ Recent Completed Lessons</div>
+        <ul style="padding-left:18px">${completedRecent}</ul>
+
+        <div class="divider"></div>
+        <div class="section-title">✍️ Writing Submissions</div>
+        ${writingList}
+
+        <div class="divider"></div>
+        <div class="section-title">🎙️ Speech Attempts</div>
+        ${speechList}
+
+        <div class="divider"></div>
+        <div class="section-title">🧾 Recent Activity Logs</div>
+        ${recentLogs}
+      `;
+    }
+
+    function getStudentGroupStatusForTeacher(db, s){
+      const groups = Object.values(db.groups || {}).filter(g => (g.memberIds || []).includes(s.id));
+      if(!groups.length) return `<div class="muted">No group assignments for this student.</div>`;
+      return groups.map(g => {
+        const tasks = g.tasks || [];
+        if(!tasks.length){
+          return `<div class="card" style="box-shadow:none;background:var(--bg);margin:10px 0">
+            <div style="font-weight:900">👥 ${escapeHTML(g.name)} (${escapeHTML(g.section)})</div>
+            <div class="muted">No tasks yet.</div>
+          </div>`;
+        }
+        const rows = tasks.map(t => {
+          const done = !!t.statusByStudent?.[s.id];
+          const overdue = t.deadline && (new Date(t.deadline).getTime() < Date.now()) && !done;
+          const badge = done ? 'badge-ok' : overdue ? 'badge-bad' : 'badge-warn';
+          const label = done ? 'Done' : overdue ? 'Overdue' : 'Pending';
+          return `
+            <div class="card" style="box-shadow:none;background:#fff;margin:10px 0">
+              <div class="row" style="justify-content:space-between">
+                <div style="font-weight:900">${escapeHTML(t.title)}</div>
+                <div class="badge ${badge}">${done?'✅':'📌'} ${label}</div>
+              </div>
+              <div class="muted">Deadline: ${escapeHTML(t.deadline || "—")} • XP: +${t.xp}</div>
+            </div>`;
+        }).join("");
+        return `<div class="card" style="box-shadow:none;background:var(--bg);margin:10px 0">
+          <div style="font-weight:900">👥 ${escapeHTML(g.name)} (${escapeHTML(g.section)})</div>
+          <div class="divider"></div>
+          ${rows}
+        </div>`;
+      }).join("");
+    }
+
+    // Close modal when clicking backdrop
+    document.addEventListener('click', (e) => {
+      const backdrop = document.getElementById('t-student-modal');
+      if(!backdrop || !backdrop.classList.contains('active')) return;
+      if(e.target === backdrop) closeTeacherStudentDetail();
+    });
+
+    // Close modal with ESC
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape') closeTeacherStudentDetail();
+    });
+
+
+function adminDeactivateTeacher(username){
+      const db=getDB();
+      const t=db.teachers[username];
+      if(!t) return;
+      if(!confirm('Deactivate this teacher account?')) return;
+      t.inactive=true;
+      saveDB(db);
+      logEvent('admin', session.adminUsername, 'teacher_deactivated', { username });
+      notify('Teacher deactivated ✅');
+      renderAdminTeachers();
+    }
+
+    function adminReactivateTeacher(username){
+      const db=getDB();
+      const t=db.teachers[username];
+      if(!t) return;
+      if(!confirm('Reactivate this teacher account?')) return;
+      t.inactive=false;
+      saveDB(db);
+      logEvent('admin', session.adminUsername, 'teacher_reactivated', { username });
+      notify('Teacher reactivated ✅');
+      renderAdminTeachers();
+    }
+
+    
+    function adminArchiveTeacher(username){
+      const db = getDB();
+      const t = db.teachers[username];
+      if(!t) return;
+      if(!confirm("Archive this teacher account? (Login will be disabled)")) return;
+      t.archived = true;
+      t.inactive = true; // keep legacy aligned
+      saveDB(db);
+      logEvent("admin", session.adminUsername, "teacher_archived", { username });
+      notify("Teacher archived ✅");
+      renderAdminTeachers();
+      renderAdminHistory();
+    }
+
+    function adminReactivateTeacher(username){
+      const db = getDB();
+      const t = db.teachers[username];
+      if(!t) return;
+      if(!confirm("Reactivate this teacher account?")) return;
+      t.archived = false;
+      t.inactive = false;
+      saveDB(db);
+      logEvent("admin", session.adminUsername, "teacher_reactivated", { username });
+      notify("Teacher reactivated ✅");
+      renderAdminTeachers();
+      renderAdminHistory();
+    }
+
+    function renderAdminHistory(){
+      const db = getDB();
+      const wrap = document.getElementById('admin-history-wrap');
+      if(!wrap) return;
+
+      const filter = (document.getElementById('a-hist-filter')?.value || 'ALL');
+
+      const activeStudents = Object.values(db.students||{}).filter(s => !s.archived).length;
+      const archivedStudents = Object.values(db.students||{}).filter(s => !!s.archived).length;
+      const activeTeachers = Object.values(db.teachers||{}).filter(t => !(t.archived||t.inactive)).length;
+      const archivedTeachers = Object.values(db.teachers||{}).filter(t => !!(t.archived||t.inactive)).length;
+
+      const header = `
+        <div class="card" style="box-shadow:none;background:var(--bg);margin-bottom:12px">
+          <div class="row" style="justify-content:space-between">
+            <div class="badge badge-ok">👨‍🎓 Active Students: ${activeStudents}</div>
+            <div class="badge badge-warn">🗄️ Archived Students: ${archivedStudents}</div>
+            <div class="badge badge-ok">👩‍🏫 Active Teachers: ${activeTeachers}</div>
+            <div class="badge badge-warn">🗄️ Archived Teachers: ${archivedTeachers}</div>
+          </div>
+          <div class="muted" style="margin-top:8px">Includes logins, maintenance actions (archive/reactivate/reset), and basic audit events.</div>
+        </div>
+      `;
+
+      const logs = (db.logs || []).slice();
+
+      const keep = logs.filter(l => {
+        if(filter === 'ALL') return true;
+
+        if(filter === 'RESET'){
+          return l.type === 'student_progress_reset';
+        }
+
+        if(filter === 'ACCOUNT'){
+          return [
+            'student_created','teacher_created',
+            'student_archived','student_reactivated',
+            'teacher_archived','teacher_reactivated',
+            'teacher_deactivated','teacher_activated',
+            'student_progress_reset'
+          ].includes(l.type);
+        }
+
+        if(filter === 'LOGIN'){
+          return l.type === 'login';
+        }
+
+        return true;
+      }).slice(0, 40);
+
+      const rows = keep.map(l => {
+        const at = new Date(l.at).toLocaleString();
+        const meta = l.meta || {};
+        const who = l.actorId || meta.studentId || meta.username || '';
+        const role = l.actorRole || '';
+        return `
+          <div class="lesson-card" style="cursor:default;border-color:var(--purple)">
+            <div class="lesson-icon">🧾</div>
+            <div style="flex:1">
+              <div style="font-weight:900">${escapeHTML(role)} • ${escapeHTML(l.type)}</div>
+              <div class="muted">${escapeHTML(at)} • ${escapeHTML(who)} • ${escapeHTML(JSON.stringify(meta))}</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      wrap.innerHTML = header + (rows || `<div class="muted">No history yet.</div>`);
+    }
+
+function boot(){
+      getDB();
+      renderAvatars();
+    }
+
+    boot();
+  
+    // PWA: minimal Service Worker registration for "web + mobile" (installable web app).
+    window.addEventListener('load', () => {
+      if(!('serviceWorker' in navigator)) return;
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+
+  </script>
+</body>
+</html>
